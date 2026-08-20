@@ -1,7 +1,13 @@
 'use client';
 
-import { useAppForm } from '@/lib/form';
-import * as z from 'zod';
+import { FormikProvider, useFormik } from 'formik';
+import { useState } from 'react';
+import * as yup from 'yup';
+
+import { SelectField } from '@/components/forms/fields/select-field';
+import { TextField } from '@/components/forms/fields/text-field';
+import { TextareaField } from '@/components/forms/fields/textarea-field';
+import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 import {
@@ -13,15 +19,31 @@ import {
   SheetTitle,
   SheetTrigger
 } from '@/components/ui/sheet';
-import { Icons } from '@/components/icons';
-import { useState } from 'react';
 
-const productSchema = z.object({
-  name: z.string().min(2, 'Product name must be at least 2 characters'),
-  category: z.string().min(1, 'Please select a category'),
-  price: z.number({ error: 'Price is required' }).min(0.01, 'Price must be greater than 0'),
-  description: z.string().min(10, 'Description must be at least 10 characters')
+const productSchema = yup.object({
+  name: yup.string().min(2, 'Product name must be at least 2 characters').required(),
+  category: yup.string().min(1, 'Please select a category').required(),
+  price: yup
+    .number()
+    .typeError('Price is required')
+    .required('Price is required')
+    .min(0.01, 'Price must be greater than 0'),
+  description: yup.string().min(10, 'Description must be at least 10 characters').required()
 });
+
+type ProductFormValues = {
+  name: string;
+  category: string;
+  price: number | undefined;
+  description: string;
+};
+
+const initialValues: ProductFormValues = {
+  name: '',
+  category: '',
+  price: undefined,
+  description: ''
+};
 
 const categoryOptions = [
   { value: 'beauty', label: 'Beauty Products' },
@@ -33,104 +55,86 @@ const categoryOptions = [
 export default function SheetProductForm() {
   const [open, setOpen] = useState(false);
 
-  const form = useAppForm({
-    defaultValues: {
-      name: '',
-      category: '',
-      price: undefined as number | undefined,
-      description: ''
-    },
-    validators: {
-      onSubmit: productSchema
-    },
+  const formik = useFormik<ProductFormValues>({
+    initialValues,
+    validationSchema: productSchema,
     onSubmit: () => {
       alert('Product created successfully!');
       setOpen(false);
-      form.reset();
+      formik.resetForm();
     }
   });
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={<Button />}>
-        <Icons.add className='mr-2 h-4 w-4' />
-        Add Product
-      </SheetTrigger>
-      <SheetContent className='flex flex-col'>
-        <SheetHeader>
-          <SheetTitle>New Product</SheetTitle>
-          <SheetDescription>Fill in the details to create a new product.</SheetDescription>
-        </SheetHeader>
+    <FormikProvider value={formik}>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger render={<Button />}>
+          <Icons.add className='mr-2 h-4 w-4' />
+          Add Product
+        </SheetTrigger>
 
-        <div className='flex-1 overflow-auto'>
-          <form
-            id='sheet-product-form'
-            className='space-y-4 p-4 md:p-4'
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-          >
-            <FieldGroup>
-              <form.AppField
-                name='name'
-                children={(field) => (
-                  <field.TextField label='Product Name' required placeholder='Enter product name' />
-                )}
-              />
+        <SheetContent className='flex flex-col'>
+          <SheetHeader>
+            <SheetTitle>New Product</SheetTitle>
+            <SheetDescription>Fill in the details to create a new product.</SheetDescription>
+          </SheetHeader>
 
-              <form.AppField
-                name='category'
-                children={(field) => (
-                  <field.SelectField
-                    label='Category'
-                    required
-                    options={categoryOptions}
-                    placeholder='Select category'
-                  />
-                )}
-              />
+          <div className='flex-1 overflow-auto'>
+            <form
+              id='sheet-product-form'
+              className='space-y-4 p-4 md:p-4'
+              noValidate
+              onSubmit={formik.handleSubmit}
+            >
+              <FieldGroup>
+                <TextField
+                  name='name'
+                  label='Product Name'
+                  required
+                  placeholder='Enter product name'
+                />
 
-              <form.AppField
-                name='price'
-                children={(field) => (
-                  <field.TextField
-                    label='Price'
-                    required
-                    type='number'
-                    min={0}
-                    step='0.01'
-                    placeholder='Enter price'
-                  />
-                )}
-              />
+                <SelectField
+                  name='category'
+                  label='Category'
+                  required
+                  options={categoryOptions}
+                  placeholder='Select category'
+                />
 
-              <form.AppField
-                name='description'
-                children={(field) => (
-                  <field.TextareaField
-                    label='Description'
-                    required
-                    placeholder='Enter product description'
-                    maxLength={500}
-                    rows={4}
-                    showCount
-                  />
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </div>
+                <TextField
+                  name='price'
+                  label='Price'
+                  required
+                  type='number'
+                  min={0}
+                  step={0.01}
+                  placeholder='Enter price'
+                />
 
-        <SheetFooter>
-          <Button type='button' variant='outline' onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button type='submit' form='sheet-product-form'>
-            Create Product
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+                <TextareaField
+                  name='description'
+                  label='Description'
+                  required
+                  placeholder='Enter product description'
+                  maxLength={500}
+                  rows={4}
+                  showCount
+                />
+              </FieldGroup>
+            </form>
+          </div>
+
+          <SheetFooter>
+            <Button type='button' variant='outline' onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button type='submit' form='sheet-product-form' disabled={formik.isSubmitting}>
+              Create Product
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    </FormikProvider>
   );
 }

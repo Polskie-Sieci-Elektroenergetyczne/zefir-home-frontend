@@ -1,14 +1,16 @@
 import { createParser } from 'nuqs/server';
-import { z } from 'zod';
+import * as yup from 'yup';
 
 import { dataTableConfig } from '@/config/data-table';
 
 import type { ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
 
-const sortingItemSchema = z.object({
-  id: z.string(),
-  desc: z.boolean()
+const sortingItemSchema = yup.object({
+  id: yup.string().required(),
+  desc: yup.boolean().required()
 });
+
+const sortingSchema = yup.array().of(sortingItemSchema).required();
 
 export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>) => {
   const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
@@ -17,15 +19,15 @@ export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>)
     parse: (value) => {
       try {
         const parsed = JSON.parse(value);
-        const result = z.array(sortingItemSchema).safeParse(parsed);
+        const result = sortingSchema.validateSync(parsed, {
+          strict: true
+        });
 
-        if (!result.success) return null;
-
-        if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
+        if (validKeys && result.some((item) => !validKeys.has(item.id))) {
           return null;
         }
 
-        return result.data as ExtendedColumnSort<TData>[];
+        return result as ExtendedColumnSort<TData>[];
       } catch {
         return null;
       }
@@ -37,15 +39,32 @@ export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>)
   });
 };
 
-const filterItemSchema = z.object({
-  id: z.string(),
-  value: z.union([z.string(), z.array(z.string())]),
-  variant: z.enum(dataTableConfig.filterVariants),
-  operator: z.enum(dataTableConfig.operators),
-  filterId: z.string()
+const filterItemSchema = yup.object({
+  id: yup.string().required(),
+  value: yup
+    .mixed<string | string[]>()
+    .test(
+      'is-string-or-string-array',
+      'value must be a string or an array of strings',
+      (value): value is string | string[] =>
+        typeof value === 'string' ||
+        (Array.isArray(value) && value.every((item) => typeof item === 'string'))
+    )
+    .required(),
+  variant: yup
+    .mixed<(typeof dataTableConfig.filterVariants)[number]>()
+    .oneOf(dataTableConfig.filterVariants)
+    .required(),
+  operator: yup
+    .mixed<(typeof dataTableConfig.operators)[number]>()
+    .oneOf(dataTableConfig.operators)
+    .required(),
+  filterId: yup.string().required()
 });
 
-export type FilterItemSchema = z.infer<typeof filterItemSchema>;
+const filtersSchema = yup.array().of(filterItemSchema).required();
+
+export type FilterItemSchema = yup.InferType<typeof filterItemSchema>;
 
 export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>) => {
   const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
@@ -54,15 +73,15 @@ export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>)
     parse: (value) => {
       try {
         const parsed = JSON.parse(value);
-        const result = z.array(filterItemSchema).safeParse(parsed);
+        const result = filtersSchema.validateSync(parsed, {
+          strict: true
+        });
 
-        if (!result.success) return null;
-
-        if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
+        if (validKeys && result.some((item) => !validKeys.has(item.id))) {
           return null;
         }
 
-        return result.data as ExtendedColumnFilter<TData>[];
+        return result as ExtendedColumnFilter<TData>[];
       } catch {
         return null;
       }

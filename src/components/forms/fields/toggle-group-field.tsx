@@ -1,34 +1,40 @@
 'use client';
 
+import { useField } from 'formik';
 import * as React from 'react';
+
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { ToggleGroup } from '@/components/ui/toggle-group';
-import { useFieldContext, type BaseFieldProps } from '@/lib/form-context';
 
-/**
- * Multi-select toggle group over a `string[]` value. Pass `ToggleGroupItem`s
- * as children; use with `mode='array'` on the `<form.AppField>`.
- */
-export function ToggleGroupField({
-  label,
-  description,
-  children
-}: Omit<BaseFieldProps, 'required'> & { children: React.ReactNode }) {
-  const field = useFieldContext<string[]>();
-  const labelId = `${field.name}-label`;
+export interface ToggleGroupFieldProps {
+  name: string;
+  label: string;
+  description?: string;
+  children: React.ReactNode;
+}
+
+/** Multi-select toggle group backed by a Formik `string[]` value. */
+export function ToggleGroupField({ name, label, description, children }: ToggleGroupFieldProps) {
+  const [field, , helpers] = useField<string[]>(name);
+  const labelId = `${name}-label`;
 
   return (
     <Field>
       <FieldLabel id={labelId}>{label}</FieldLabel>
+
       <ToggleGroup
         multiple
         variant='outline'
         aria-labelledby={labelId}
-        value={field.state.value || []}
-        onValueChange={(val) => field.handleChange(val)}
+        value={field.value ?? []}
+        onValueChange={(value) => {
+          void helpers.setValue(value);
+          void helpers.setTouched(true);
+        }}
       >
         {children}
       </ToggleGroup>
+
       {description && <FieldDescription>{description}</FieldDescription>}
     </Field>
   );
