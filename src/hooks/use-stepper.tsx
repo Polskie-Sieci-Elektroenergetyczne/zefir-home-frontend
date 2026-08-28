@@ -1,6 +1,11 @@
-import { setIn, type FormikErrors, type FormikProps, type FormikTouched } from 'formik';
-import { useCallback, useState } from 'react';
-import * as yup from 'yup';
+import {
+  setIn,
+  type FormikErrors,
+  type FormikProps,
+  type FormikTouched,
+} from "formik";
+import { useCallback, useState } from "react";
+import { z } from "zod";
 
 type HandleCancelOrBackOpts = {
   onBack?: VoidFunction;
@@ -16,7 +21,7 @@ type StepState = {
   isCompleted: boolean;
 };
 
-type AnyObjectSchema = yup.ObjectSchema<Record<string, unknown>, yup.AnyObject, unknown, ''>;
+type AnyObjectSchema = z.ZodObject<any>;
 
 type UseFormStepperOptions = {
   /**
@@ -27,42 +32,44 @@ type UseFormStepperOptions = {
 };
 
 /**
- * Converts Yup validation failures into Formik's nested error/touched shape.
+ * Converts Zod validation issues into Formik's nested error/touched shape.
  */
-function getFormikValidationState<TValues>(error: yup.ValidationError): {
+function getFormikValidationState<TValues>(issues: z.ZodIssue[]): {
   errors: FormikErrors<TValues>;
   touched: FormikTouched<TValues>;
 } {
   let errors = {} as FormikErrors<TValues>;
   let touched = {} as FormikTouched<TValues>;
 
-  const issues = error.inner.length > 0 ? error.inner : [error];
-
   for (const issue of issues) {
-    if (!issue.path) continue;
+    if (issue.path.length === 0) continue;
 
-    // Keep the first error for a field, matching Formik/Yup's usual behavior.
-    if (!getPath(errors, issue.path)) {
-      errors = setIn(errors, issue.path, issue.message);
+    const path = issue.path.join(".");
+
+    // Keep the first error for a field.
+    if (!getPath(errors, path)) {
+      errors = setIn(errors, path, issue.message);
     }
 
-    touched = setIn(touched, issue.path, true);
+    touched = setIn(touched, path, true);
   }
 
   return { errors, touched };
 }
 
 function getPath(value: unknown, path: string): unknown {
-  const normalized = path.replace(/\[(\d+)\]/g, '.$1');
-  return normalized.split('.').reduce<unknown>((current, key) => {
-    if (current == null || typeof current !== 'object') return undefined;
+  return path.split(".").reduce<unknown>((current, key) => {
+    if (current == null || typeof current !== "object") {
+      return undefined;
+    }
+
     return (current as Record<string, unknown>)[key];
   }, value);
 }
 
 async function validateWithSchema<TValues>(
-  schema: yup.ObjectSchema<any>,
-  values: TValues
+  schema: z.ZodType,
+  values: TValues,
 ): Promise<
   | { success: true }
   | {
@@ -71,32 +78,29 @@ async function validateWithSchema<TValues>(
       touched: FormikTouched<TValues>;
     }
 > {
-  try {
-    await schema.validate(values, {
-      abortEarly: false
-    });
+  const result = await schema.safeParseAsync(values);
 
+  if (result.success) {
     return { success: true };
-  } catch (error) {
-    if (!(error instanceof yup.ValidationError)) {
-      throw error;
-    }
-
-    return {
-      success: false,
-      ...getFormikValidationState<TValues>(error)
-    };
   }
+
+  return {
+    success: false,
+    ...getFormikValidationState<TValues>(result.error.issues),
+  };
 }
 
 /**
- * Formik + Yup multi-step form navigation.
+ * Formik + Zod multi-step form navigation.
  *
  * "Next" validates only the current step schema, so fields on later steps
  * stay pristine. The final step validates the complete schema before Formik's
  * submit handler is allowed to run.
  */
-export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStepperOptions) {
+export function useFormStepper(
+  schemas: AnyObjectSchema[],
+  options?: UseFormStepperOptions,
+) {
   const stepCount = schemas.length;
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -112,7 +116,7 @@ export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStep
     (nextStep: number) => {
       setCurrentStep(Math.min(Math.max(nextStep, 1), stepCount));
     },
-    [stepCount]
+    [stepCount],
   );
 
   const step: StepState = {
@@ -121,7 +125,7 @@ export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStep
     goToNextStep,
     goToPrevStep,
     goToStep,
-    isCompleted: currentStep === stepCount
+    isCompleted: currentStep === stepCount,
   };
 
   const currentValidator = schemas[currentStep - 1];
@@ -133,13 +137,16 @@ export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStep
     if (!result.success) {
       form.setErrors(result.errors);
       form.setTouched(result.touched, false);
+
       return false;
     }
 
     return true;
   };
 
-  const handleNextStepOrSubmit = async <TValues,>(form: FormikProps<TValues>) => {
+  const handleNextStepOrSubmit = async <TValues,>(
+    form: FormikProps<TValues>,
+  ) => {
     const currentStepIsValid = await triggerFormGroup(form);
 
     if (!currentStepIsValid) {
@@ -152,7 +159,10 @@ export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStep
     }
 
     if (options?.fullSchema) {
-      const fullResult = await validateWithSchema(options.fullSchema, form.values);
+      const fullResult = await validateWithSchema(
+        options.fullSchema,
+        form.values,
+      );
 
       if (!fullResult.success) {
         const failingStep = await findFirstFailingStep(schemas, form.values);
@@ -175,6 +185,7 @@ export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStep
     if (currentStep > 1) {
       opts?.onBack?.();
       goToPrevStep();
+
       return;
     }
 
@@ -188,20 +199,19 @@ export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStep
     currentValidator,
     triggerFormGroup,
     handleNextStepOrSubmit,
-    handleCancelOrBack
+    handleCancelOrBack,
   };
 }
 
-async function findFirstFailingStep<TValues>(schemas: AnyObjectSchema[], values: TValues) {
+async function findFirstFailingStep<TValues>(
+  schemas: AnyObjectSchema[],
+  values: TValues,
+) {
   for (let index = 0; index < schemas.length; index += 1) {
-    try {
-      await schemas[index].validate(values, { abortEarly: false });
-    } catch (error) {
-      if (error instanceof yup.ValidationError) {
-        return index;
-      }
+    const result = await schemas[index].safeParseAsync(values);
 
-      throw error;
+    if (!result.success) {
+      return index;
     }
   }
 

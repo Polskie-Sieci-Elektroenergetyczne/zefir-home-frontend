@@ -1,33 +1,44 @@
-import { createParser } from 'nuqs/server';
-import * as yup from 'yup';
+import { createParser } from "nuqs/server";
+import { z } from "zod";
 
-import { dataTableConfig } from '@/config/data-table';
+import { dataTableConfig } from "@/config/data-table";
 
-import type { ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
+import type {
+  ExtendedColumnFilter,
+  ExtendedColumnSort,
+} from "@/types/data-table";
 
-const sortingItemSchema = yup.object({
-  id: yup.string().required(),
-  desc: yup.boolean().required()
+const sortingItemSchema = z.object({
+  id: z.string(),
+  desc: z.boolean(),
 });
 
-const sortingSchema = yup.array().of(sortingItemSchema).required();
+const sortingSchema = z.array(sortingItemSchema);
 
-export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>) => {
-  const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
+export const getSortingStateParser = <TData>(
+  columnIds?: string[] | Set<string>,
+) => {
+  const validKeys = columnIds
+    ? columnIds instanceof Set
+      ? columnIds
+      : new Set(columnIds)
+    : null;
 
   return createParser({
     parse: (value) => {
       try {
         const parsed = JSON.parse(value);
-        const result = sortingSchema.validateSync(parsed, {
-          strict: true
-        });
+        const result = sortingSchema.safeParse(parsed);
 
-        if (validKeys && result.some((item) => !validKeys.has(item.id))) {
+        if (!result.success) {
           return null;
         }
 
-        return result as ExtendedColumnSort<TData>[];
+        if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
+          return null;
+        }
+
+        return result.data as ExtendedColumnSort<TData>[];
       } catch {
         return null;
       }
@@ -35,53 +46,49 @@ export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>)
     serialize: (value) => JSON.stringify(value),
     eq: (a, b) =>
       a.length === b.length &&
-      a.every((item, index) => item.id === b[index]?.id && item.desc === b[index]?.desc)
+      a.every(
+        (item, index) =>
+          item.id === b[index]?.id && item.desc === b[index]?.desc,
+      ),
   });
 };
 
-const filterItemSchema = yup.object({
-  id: yup.string().required(),
-  value: yup
-    .mixed<string | string[]>()
-    .test(
-      'is-string-or-string-array',
-      'value must be a string or an array of strings',
-      (value): value is string | string[] =>
-        typeof value === 'string' ||
-        (Array.isArray(value) && value.every((item) => typeof item === 'string'))
-    )
-    .required(),
-  variant: yup
-    .mixed<(typeof dataTableConfig.filterVariants)[number]>()
-    .oneOf(dataTableConfig.filterVariants)
-    .required(),
-  operator: yup
-    .mixed<(typeof dataTableConfig.operators)[number]>()
-    .oneOf(dataTableConfig.operators)
-    .required(),
-  filterId: yup.string().required()
+const filterItemSchema = z.object({
+  id: z.string(),
+  value: z.union([z.string(), z.array(z.string())]),
+  variant: z.enum(dataTableConfig.filterVariants),
+  operator: z.enum(dataTableConfig.operators),
+  filterId: z.string(),
 });
 
-const filtersSchema = yup.array().of(filterItemSchema).required();
+const filtersSchema = z.array(filterItemSchema);
 
-export type FilterItemSchema = yup.InferType<typeof filterItemSchema>;
+export type FilterItemSchema = z.infer<typeof filterItemSchema>;
 
-export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>) => {
-  const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
+export const getFiltersStateParser = <TData>(
+  columnIds?: string[] | Set<string>,
+) => {
+  const validKeys = columnIds
+    ? columnIds instanceof Set
+      ? columnIds
+      : new Set(columnIds)
+    : null;
 
   return createParser({
     parse: (value) => {
       try {
         const parsed = JSON.parse(value);
-        const result = filtersSchema.validateSync(parsed, {
-          strict: true
-        });
+        const result = filtersSchema.safeParse(parsed);
 
-        if (validKeys && result.some((item) => !validKeys.has(item.id))) {
+        if (!result.success) {
           return null;
         }
 
-        return result as ExtendedColumnFilter<TData>[];
+        if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
+          return null;
+        }
+
+        return result.data as ExtendedColumnFilter<TData>[];
       } catch {
         return null;
       }
@@ -94,7 +101,7 @@ export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>)
           filter.id === b[index]?.id &&
           filter.value === b[index]?.value &&
           filter.variant === b[index]?.variant &&
-          filter.operator === b[index]?.operator
-      )
+          filter.operator === b[index]?.operator,
+      ),
   });
 };
