@@ -91,7 +91,9 @@
   },
   "lint-staged": {
     "!(scripts)/**/*.{js,jsx,tsx,ts,css,less,scss,sass}": [
-      "oxfmt --write"
+      "tsc --noEmit",
+      "oxfmt --write",
+      "oxlint"
     ]
   }
 }
