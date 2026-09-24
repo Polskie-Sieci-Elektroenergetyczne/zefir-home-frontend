@@ -1,8 +1,9 @@
 import Providers from '@/components/layout/providers';
-import { Toaster } from '@/components/ui/sonner';
 import { fontVariables } from '@/components/themes/font.config';
-import { DEFAULT_THEME, THEMES } from '@/components/themes/theme.config';
 import ThemeProvider from '@/components/themes/theme-provider';
+import { DEFAULT_THEME, THEMES } from '@/components/themes/theme.config';
+import { Toaster } from '@/components/ui/sonner';
+import { Env } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
@@ -16,9 +17,7 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  ...(process.env.NEXT_PUBLIC_APP_URL
-    ? { metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL) }
-    : {}),
+  ...(Env.NEXT_PUBLIC_APP_URL ? { metadataBase: new URL(Env.NEXT_PUBLIC_APP_URL) } : {}),
   title: {
     default: 'Shadcn Dashboard - Next.js Admin Dashboard Template',
     template: '%s | Shadcn Dashboard'
