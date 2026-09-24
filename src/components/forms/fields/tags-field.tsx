@@ -1,42 +1,58 @@
 'use client';
 
+import { useField } from 'formik';
 import * as React from 'react';
+
+import { Icons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Icons } from '@/components/icons';
-import { useFieldContext, useFieldInvalid, type BaseFieldProps } from '@/lib/form-context';
 
-/**
- * Free-text tag list over a `string[]` value. Use with `mode='array'` on the
- * `<form.AppField>` — Enter or the Add button pushes, badges remove.
- */
+export interface TagsFieldProps {
+  name: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+  placeholder?: string;
+}
+
+/** Free-text tag list backed by a Formik `string[]` value. */
 export function TagsField({
+  name,
   label,
   description,
   required,
   placeholder = 'Type and press Enter...'
-}: BaseFieldProps & { placeholder?: string }) {
-  const field = useFieldContext<string[]>();
-  const isInvalid = useFieldInvalid();
+}: TagsFieldProps) {
+  const [field, meta, helpers] = useField<string[]>(name);
   const [tagInput, setTagInput] = React.useState('');
-  const values = field.state.value || [];
+
+  const values = field.value ?? [];
+  const isInvalid = meta.touched && Boolean(meta.error);
 
   const addTag = () => {
     const tag = tagInput.trim();
-    if (tag && !values.includes(tag)) {
-      field.pushValue(tag);
-      setTagInput('');
-    }
+
+    if (!tag || values.includes(tag)) return;
+
+    void helpers.setValue([...values, tag]);
+    void helpers.setTouched(true);
+    setTagInput('');
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    void helpers.setValue(values.filter((tag) => tag !== tagToRemove));
+    void helpers.setTouched(true);
   };
 
   return (
-    <Field data-invalid={isInvalid}>
+    <Field data-invalid={isInvalid || undefined}>
       <FieldLabel>
         {label}
         {required && ' *'}
       </FieldLabel>
+
       <div className='flex gap-2'>
         <Input
           value={tagInput}
@@ -49,21 +65,24 @@ export function TagsField({
           }}
           placeholder={placeholder}
           aria-label={`Add a ${label.toLowerCase().replace(/ \*$/, '')}`}
-          aria-invalid={isInvalid}
-          aria-describedby={isInvalid ? `${field.name}-error` : undefined}
+          aria-invalid={isInvalid || undefined}
+          aria-describedby={isInvalid ? `${name}-error` : undefined}
         />
+
         <Button type='button' variant='secondary' onClick={addTag}>
           Add
         </Button>
       </div>
+
       {values.length > 0 && (
         <div className='flex flex-wrap gap-2'>
-          {values.map((tag, idx) => (
+          {values.map((tag) => (
             <Badge key={tag} variant='secondary' className='gap-1'>
               {tag}
+
               <button
                 type='button'
-                onClick={() => field.removeValue(idx)}
+                onClick={() => removeTag(tag)}
                 aria-label={`Remove ${tag}`}
                 className='hover:text-destructive ml-0.5'
               >
@@ -73,8 +92,10 @@ export function TagsField({
           ))}
         </div>
       )}
+
       {description && <FieldDescription>{description}</FieldDescription>}
-      {isInvalid && <FieldError id={`${field.name}-error`} errors={field.state.meta.errors} />}
+
+      {isInvalid && <FieldError id={`${name}-error`} errors={[{ message: meta.error }]} />}
     </Field>
   );
 }
