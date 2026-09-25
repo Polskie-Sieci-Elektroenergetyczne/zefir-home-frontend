@@ -1,29 +1,29 @@
-import { withSentryConfig } from "@sentry/nextjs";
-import type { NextConfig } from "next";
+import { withSentryConfig } from '@sentry/nextjs';
+import type { NextConfig } from 'next';
 
 const baseConfig: NextConfig = {
-  output: process.env.BUILD_STANDALONE === "true" ? "standalone" : undefined,
+  output: process.env.BUILD_STANDALONE === 'true' ? 'standalone' : undefined,
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "api.slingacademy.com",
-        port: "",
-      },
-    ],
+        protocol: 'https',
+        hostname: 'api.slingacademy.com',
+        port: ''
+      }
+    ]
   },
-  transpilePackages: ["geist"],
+  transpilePackages: ['geist'],
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
+    removeConsole: process.env.NODE_ENV === 'production'
   },
   turbopack: {
     rules: {
-      "*.svg": {
-        loaders: ["@svgr/webpack"],
-        as: "*.js",
-      },
-    },
-  },
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js'
+      }
+    }
+  }
 };
 
 let configWithPlugins = baseConfig;
@@ -34,21 +34,19 @@ if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
     project: process.env.NEXT_PUBLIC_SENTRY_PROJECT,
     silent: !process.env.CI,
     widenClientFileUpload: true,
-    tunnelRoute: "/monitoring",
+    tunnelRoute: '/monitoring',
     telemetry: false,
     webpack: {
       reactComponentAnnotation: {
-        enabled: true,
+        enabled: true
       },
       treeshake: {
-        removeDebugLogging: true,
-      },
+        removeDebugLogging: true
+      }
     },
     sourcemaps: {
-      disable:
-        !process.env.NEXT_PUBLIC_SENTRY_ORG ||
-        !process.env.NEXT_PUBLIC_SENTRY_PROJECT,
-    },
+      disable: !process.env.NEXT_PUBLIC_SENTRY_ORG || !process.env.NEXT_PUBLIC_SENTRY_PROJECT
+    }
   });
 }
 
