@@ -3,12 +3,16 @@ import { fontVariables } from '@/components/themes/font.config';
 import ThemeProvider from '@/components/themes/theme-provider';
 import { DEFAULT_THEME, THEMES } from '@/components/themes/theme.config';
 import { Toaster } from '@/components/ui/sonner';
+import { routing } from '@/i18n/routing';
 import { Env } from '@/lib/env';
 import { cn } from '@/lib/utils';
+import { Locale, NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import '../styles/globals.css';
+import '@/styles/globals.css';
+import { validateLocale } from '@/i18n/validate-locale';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -51,14 +55,28 @@ export const viewport: Viewport = {
   themeColor: META_THEME_COLORS.light
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
+  children,
+  params
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: localeParam } = await params;
+  const locale: Locale = validateLocale(localeParam);
+
+  const messages = await getMessages();
   const cookieStore = await cookies();
   const activeThemeValue = cookieStore.get('active_theme')?.value;
   const isValidTheme = THEMES.some((t) => t.value === activeThemeValue);
   const themeToApply = isValidTheme ? activeThemeValue! : DEFAULT_THEME;
 
   return (
-    <html lang='en' suppressHydrationWarning data-theme={themeToApply}>
+    <html lang={locale} suppressHydrationWarning data-theme={themeToApply}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -79,20 +97,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           fontVariables
         )}
       >
-        <NuqsAdapter>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-            enableColorScheme
-          >
-            <Providers activeThemeValue={themeToApply}>
-              <Toaster />
-              {children}
-            </Providers>
-          </ThemeProvider>
-        </NuqsAdapter>
+        <NextIntlClientProvider messages={messages}>
+          <NuqsAdapter>
+            <ThemeProvider
+              attribute='class'
+              defaultTheme='system'
+              enableSystem
+              disableTransitionOnChange
+              enableColorScheme
+            >
+              <Providers activeThemeValue={themeToApply}>
+                <Toaster />
+                {children}
+              </Providers>
+            </ThemeProvider>
+          </NuqsAdapter>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { Icons } from '@/components/icons';
+import { Link } from '@/i18n/navigation';
 import { Fragment } from 'react';
 
 export function Breadcrumbs() {
@@ -22,7 +23,9 @@ export function Breadcrumbs() {
           <Fragment key={item.title}>
             {index !== items.length - 1 && (
               <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>
+                <BreadcrumbLink render={<Link href={item.link} aria-label={item.title} />}>
+                  {item.title}
+                </BreadcrumbLink>
               </BreadcrumbItem>
             )}
             {index < items.length - 1 && (

@@ -3,11 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { StatsErrorAlert } from '@/features/overview/components/stats-error';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useEffect, useTransition } from 'react';
 import * as Sentry from '@sentry/nextjs';
 
-export default function PieStatsError({ error, reset }: { error: Error; reset: () => void }) {
+export default function AreaStatsError({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -25,7 +25,7 @@ export default function PieStatsError({ error, reset }: { error: Error; reset: (
 
   return (
     <StatsErrorAlert
-      message={`Failed to load pie statistics: ${error.message}`}
+      message={`Failed to load area statistics: ${error.message}`}
       action={
         <>
           <Button variant='outline' size='sm' onClick={retry} disabled={isPending}>
