@@ -27,7 +27,7 @@ import {
 import { navGroups } from '@/config/nav-config';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useFilteredNavGroups } from '@/hooks/use-nav';
-import { Link, usePathname, useRouter } from '@/i18n/navigation';
+import { Link, usePathname, useRouter } from '@/i18n';
 import * as React from 'react';
 import { Icons } from '@/components/icons';
 

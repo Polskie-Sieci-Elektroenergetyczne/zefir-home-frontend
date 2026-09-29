@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from '@/i18n/navigation';
+import { usePathname } from '@/i18n';
 import { useMemo } from 'react';
 
 type BreadcrumbItem = {

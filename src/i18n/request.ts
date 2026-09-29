@@ -1,6 +1,6 @@
 import * as rootParams from 'next/root-params';
 import { getRequestConfig } from 'next-intl/server';
-import { validateLocale } from '@/i18n/validate-locale';
+import { validateLocale } from '@/i18n';
 
 export default getRequestConfig(async () => {
   const locale = validateLocale(await rootParams.locale());

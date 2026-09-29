@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from '@/i18n/navigation';
+import { useRouter } from '@/i18n';
 
 import { Button } from '@/components/ui/button';
 

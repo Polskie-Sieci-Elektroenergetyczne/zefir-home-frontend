@@ -3,7 +3,7 @@ import { fontVariables } from '@/components/themes/font.config';
 import ThemeProvider from '@/components/themes/theme-provider';
 import { DEFAULT_THEME, THEMES } from '@/components/themes/theme.config';
 import { Toaster } from '@/components/ui/sonner';
-import { routing } from '@/i18n/routing';
+import { routing, validateLocale } from '@/i18n';
 import { Env } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import { Locale, NextIntlClientProvider } from 'next-intl';
@@ -12,7 +12,6 @@ import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import '@/styles/globals.css';
-import { validateLocale } from '@/i18n/validate-locale';
 
 const META_THEME_COLORS = {
   light: '#ffffff',

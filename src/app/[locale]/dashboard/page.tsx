@@ -1,5 +1,4 @@
-import { redirect } from '@/i18n/navigation';
-import { validateLocale } from '@/i18n/validate-locale';
+import { redirect, validateLocale } from '@/i18n';
 import type { Locale } from 'next-intl';
 
 export default async function Dashboard({ params }: { params: Promise<{ locale: unknown }> }) {

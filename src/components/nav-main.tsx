@@ -15,7 +15,7 @@ import {
   SidebarMenuSubItem
 } from '@/components/ui/sidebar';
 import { Icon } from '@/components/icons';
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/i18n';
 
 export function NavMain({
   items
