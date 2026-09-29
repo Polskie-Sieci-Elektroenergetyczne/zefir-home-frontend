@@ -9,6 +9,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Icons } from '@/components/icons';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 export default function OverViewLayout({
@@ -22,11 +23,13 @@ export default function OverViewLayout({
   bar_stats: React.ReactNode;
   area_stats: React.ReactNode;
 }) {
+  const t = useTranslations('Overview');
+
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col gap-4'>
         <div className='flex items-center justify-between'>
-          <h2 className='text-2xl font-bold tracking-tight'>Hi, Welcome back 👋</h2>
+          <h2 className='text-2xl font-bold tracking-tight'>{t('welcomeBack')}</h2>
         </div>
 
         <div className='*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4'>
