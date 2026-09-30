@@ -63,6 +63,9 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@commitlint/types": "^21.2.3",
     "@faker-js/faker": "^9.9.0",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "22.10.2",
