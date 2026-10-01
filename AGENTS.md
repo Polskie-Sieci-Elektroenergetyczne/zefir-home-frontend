@@ -62,7 +62,7 @@ The project follows a feature-based folder structure designed for scalability in
 
 ### Development Tools
 
-- Oxlint for linring and Oxfmt for formatting
+- Oxlint for linting and Oxfmt for formatting
 - Husky for git hooks
 - lint-staged for pre-commit formatting
 
