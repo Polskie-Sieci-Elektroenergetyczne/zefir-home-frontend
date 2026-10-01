@@ -14,8 +14,8 @@ This file provides essential information for AI coding agents working on this pr
 - **UI Components**: shadcn/ui (New York style)
 - **Error Tracking**: Sentry
 - **Charts**: Recharts
-- **Containerization**: Docker (Node.js & Bun Dockerfiles)
-- **Package Manager**: Bun (preferred) or npm
+- **Containerization**: Docker (Node.js)
+- **Package Manager**: npm
 
 The project follows a feature-based folder structure designed for scalability in SaaS applications, internal tools, and admin panels.
 
@@ -135,11 +135,10 @@ The project follows a feature-based folder structure designed for scalability in
 │   └── themes.md          # Theme customization guide
 
 /scripts                   # Dev tooling
-    ├── cleanup.js         # Feature removal, run via `bun run cleanup` (templates in cleanup-templates/, typechecked)
+    ├── cleanup.js         # Feature removal, run via `npm run cleanup` (templates in cleanup-templates/, typechecked)
     └── cleanup-templates/ # Replacement files cleanup.js copies into the repo
 
 Dockerfile                 # Node.js production Dockerfile
-Dockerfile.bun             # Bun production Dockerfile
 .dockerignore              # Docker build exclusions
 ```
 
@@ -149,30 +148,30 @@ Dockerfile.bun             # Bun production Dockerfile
 
 ```bash
 # Install dependencies
-bun install
+npm install
 
 # Development server
-bun run dev          # Starts at http://localhost:3000
+npm run dev          # Starts at http://localhost:3000
 
 # Build for production
-bun run build
+npm run build
 
 # Start production server
-bun run start
+npm run start
 
 # Linting
-bun run lint         # Run ESLint
-bun run lint:fix     # Fix ESLint issues and format
-bun run lint:strict  # Zero warnings tolerance
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix ESLint issues and format
+npm run lint:strict  # Zero warnings tolerance
 
-bun run typecheck    # tsc --noEmit
+npm run typecheck    # tsc --noEmit
 
 # Formatting
-bun run format       # Format with Prettier
-bun run format:check # Check formatting
+npm run format       # Format with Prettier
+npm run format:check # Check formatting
 
 # Git hooks
-bun run prepare      # Install Husky hooks
+npm run prepare      # Install Husky hooks
 ```
 
 ---

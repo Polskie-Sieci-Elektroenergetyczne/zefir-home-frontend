@@ -21,17 +21,13 @@ Sentry source maps are uploaded automatically in CI.
 
 ## Docker
 
-Two production-ready Dockerfiles are included: `Dockerfile` (Node.js) and `Dockerfile.bun` (Bun). Pass `NEXT_PUBLIC_*` variables as `--build-arg` at build time and runtime secrets via `-e` at run time.
+The production-ready Dockerfile is included: `Dockerfile` (Node.js). Pass `NEXT_PUBLIC_*` variables as `--build-arg` at build time and runtime secrets via `-e` at run time.
 
 Build the image:
 
 ```bash
 # Node.js
 docker build \
-  -t shadcn-dashboard .
-
-# OR Bun
-docker build -f Dockerfile.bun \
   -t shadcn-dashboard .
 ```
 
