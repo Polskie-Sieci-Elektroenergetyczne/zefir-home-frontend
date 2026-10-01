@@ -62,8 +62,7 @@ The project follows a feature-based folder structure designed for scalability in
 
 ### Development Tools
 
-- ESLint 8.x with Next.js core-web-vitals config
-- Prettier 3.x with prettier-plugin-tailwindcss
+- Oxlint for linring and Oxfmt for formatting
 - Husky for git hooks
 - lint-staged for pre-commit formatting
 
