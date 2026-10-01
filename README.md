@@ -138,10 +138,10 @@ Clone the repo:
 git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
 ```
 
-- `bun install`
+- `npm install`
 - Copy the example env file: `cp env.example.txt .env.local`
 - Fill in the required variables in `.env.local`
-- `bun run dev`
+- `npm run dev`
 
 ##### Environment variables
 
@@ -160,13 +160,13 @@ The app should now be running at http://localhost:3000.
 Most starters make you hand-delete demo pages and rip out dependencies. This one ships with a cleanup script that removes the optional features you don't need (folders, files, dependencies, docs, and env entries), leaving a minimal base to build on. Run `--list` to see what's removable:
 
 ```bash
-bun run cleanup --interactive    # interactive mode
-bun run cleanup --list           # see available features
-bun run cleanup --dry-run chat   # preview before removing
-bun run cleanup kanban chat      # remove specific features
+npm run cleanup --interactive    # interactive mode
+npm run cleanup --list           # see available features
+npm run cleanup --dry-run chat   # preview before removing
+npm run cleanup kanban chat      # remove specific features
 ```
 
-Run `bun run cleanup --help` for all options (with npm, pass flags after `--`: `npm run cleanup -- --list`). The replacement files it writes live in `scripts/cleanup-templates/` as real, typechecked code. When you're done, delete `scripts/cleanup.js`, `scripts/cleanup-templates/`, and the `cleanup` entry in `package.json`.
+Run `npm run cleanup --help` for all options (with npm, pass flags after `--`: `npm run cleanup -- --list`). The replacement files it writes live in `scripts/cleanup-templates/` as real, typechecked code. When you're done, delete `scripts/cleanup.js`, `scripts/cleanup-templates/`, and the `cleanup` entry in `package.json`.
 
 ## FAQ
 
@@ -181,13 +181,10 @@ Yes. MIT-licensed and free for both personal and commercial projects: no paid ti
 
 
 **How do I remove demo pages or features I don't need?**
-Run `bun run cleanup --interactive` and pick what to strip, or `bun run cleanup --list` to see what can be removed.
+Run `npm run cleanup --interactive` and pick what to strip, or `npm run cleanup --list` to see what can be removed.
 
 **Does it support Next.js 16, React 19, and Tailwind CSS v4?**
 Yes. The template is built on Next.js 16 (App Router), React 19, and Tailwind CSS v4, with shadcn/ui on Base UI primitives, and is actively maintained to track new releases.
-
-**Can I use npm instead of Bun?**
-Yes. Bun is preferred, but npm works too, and the repo even ships both Node.js and Bun Dockerfiles for deployment.
 
 **Does it work with AI coding assistants?**
 Yes. The repo ships AGENTS.md and CLAUDE.md with the project's conventions, plus a bundled Claude Code skill (`.claude/skills/kiranism-shadcn-dashboard`) that teaches agents how to add pages, tables, forms, and navigation the template way. Works with Claude Code, Cursor, and any tool that reads AGENTS.md.
@@ -196,11 +193,11 @@ Yes. The repo ships AGENTS.md and CLAUDE.md with the project's conventions, plus
 TanStack React Query with the official SSR pattern: `prefetchQuery` on the server, `HydrationBoundary` with `dehydrate` for hydration, and `useSuspenseQuery` on the client, plus nuqs for URL-synced search-param state. Mutations invalidate the cache on success.
 
 **How do I deploy it?**
-Deploy to Vercel out of the box, or use the included Docker setups: a Node.js Dockerfile and a Bun Dockerfile, both using Next.js standalone output mode. See the [deployment guide](./docs/deployment.md).
+Deploy to Vercel out of the box, or use the included Docker setup: a Node.js Dockerfile. See the [deployment guide](./docs/deployment.md).
 
 ## Deploy
 
-Deploy to Vercel out of the box, or use the included Docker setups: a Node.js Dockerfile and a Bun Dockerfile, both using Next.js standalone output mode. Full guide: [docs/deployment.md](./docs/deployment.md).
+Deploy to Vercel out of the box, or use the included Docker setup: a Node.js Dockerfile. Full guide: [docs/deployment.md](./docs/deployment.md).
 
 ### Support
 
