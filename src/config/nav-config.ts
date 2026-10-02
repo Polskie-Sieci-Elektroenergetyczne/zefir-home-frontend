@@ -44,7 +44,8 @@ export const navGroups: NavGroup[] = [
         isActive: false,
         shortcut: ['d', 'd'],
         items: []
-      },
+      },
+
       {
         title: 'Product',
         url: '/dashboard/product',
@@ -60,7 +61,7 @@ export const navGroups: NavGroup[] = [
         shortcut: ['u', 'u'],
         isActive: false,
         items: []
-      }
+      }
     ]
   },
   {
@@ -119,13 +120,14 @@ export const navGroups: NavGroup[] = [
         url: '#',
         icon: 'account',
         isActive: true,
-        items: [
+        items: [
           {
             title: 'Notifications',
             url: '/dashboard/notifications',
             icon: 'notification',
             shortcut: ['n', 'n']
-          },
+          },
+
           {
             title: 'Login',
             shortcut: ['l', 'l'],
