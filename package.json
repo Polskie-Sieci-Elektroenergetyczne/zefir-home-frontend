@@ -10,6 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "release": "semantic-release",
     "cleanup": "node scripts/cleanup.js",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint",
