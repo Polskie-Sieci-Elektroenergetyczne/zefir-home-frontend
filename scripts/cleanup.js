@@ -400,7 +400,7 @@ class FeatureCleanup {
       }
       console.log('\n✨ Cleanup complete!\n');
       console.log('📋 Next steps:');
-      console.log('  1. Run: bun install (or npm install) to sync dependencies');
+      console.log('  1. Run: npm install to sync dependencies');
       console.log('  2. Review and test your application');
       console.log('  3. To revert: git restore . (or git checkout .)');
       console.log('     Untracked files are not covered by git restore — modified env files');
