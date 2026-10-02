@@ -1,5 +1,6 @@
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin'
 
 const baseConfig: NextConfig = {
   output: process.env.BUILD_STANDALONE === 'true' ? 'standalone' : undefined,
@@ -50,4 +51,6 @@ if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
   });
 }
 
-export default configWithPlugins;
+const withNextIntl = createNextIntlPlugin()
+
+export default withNextIntl(configWithPlugins);
