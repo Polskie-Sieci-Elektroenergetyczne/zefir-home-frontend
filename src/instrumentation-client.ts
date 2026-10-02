@@ -1,8 +1,8 @@
 // This file configures the initialization of Sentry on the client.
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
-import { Env } from "@/lib/env";
-import * as Sentry from "@sentry/nextjs";
+import { Env } from '@/lib/env';
+import * as Sentry from '@sentry/nextjs';
 
 if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
   Sentry.init({
@@ -15,11 +15,10 @@ if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
     tracesSampleRate: 1,
 
     // Setting this option to true will print useful information to the console while you're setting up Sentry.
-    debug: false,
+    debug: false
   });
 }
 
 // Required by Next.js to instrument router transitions for Sentry tracing.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Sentry SDK v10 typing mismatch
-export const onRouterTransitionStart = (Sentry as any)
-  .captureRouterTransitionStart;
+export const onRouterTransitionStart = (Sentry as any).captureRouterTransitionStart;

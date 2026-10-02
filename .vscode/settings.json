@@ -1,4 +1,4 @@
 {
-    "editor.defaultFormatter": "oxc.oxc-vscode",
-    "prettier.enable": false
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "prettier.enable": false
 }
