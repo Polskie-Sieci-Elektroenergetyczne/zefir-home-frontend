@@ -75,18 +75,26 @@
     "@secretlint/secretlint-rule-pattern": "^13.0.5",
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.5",
     "@svgr/webpack": "^8.1.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@types/node": "22.10.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/sort-by": "^1.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "^5.0.3",
     "husky": "^9.1.7",
+    "jsdom": "^28.1.0",
     "lint-staged": "^17.5.1",
     "orval": "^7.13.2",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
-    "semantic-release": "^24.2.9",
     "secretlint": "^13.0.5",
-    "tw-animate-css": "^1.4.0"
+    "semantic-release": "^24.2.9",
+    "tw-animate-css": "^1.4.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^5.0.3"
   },
   "overrides": {
     "@types/react": "19.2.14",
@@ -105,7 +113,9 @@
     ]
   },
   "release": {
-    "branches": ["main"],
+    "branches": [
+      "main"
+    ],
     "tagFormat": "v${version}",
     "plugins": [
       "@semantic-release/commit-analyzer",
