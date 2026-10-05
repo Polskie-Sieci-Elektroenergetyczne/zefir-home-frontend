@@ -18,7 +18,8 @@
     "lint:strict": "oxlint --deny-warnings",
     "format": "oxfmt --write . '!**/*.md' '!**/*.mdc' '!**/*.mdx' '!**/*.yml' '!**/*.yaml'",
     "format:check": "oxfmt --check . '!**/*.md' '!**/*.mdc' '!**/*.mdx' '!**/*.yml' '!**/*.yaml'",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate-types": "orval"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -41,6 +42,7 @@
     "kbar": "^0.1.0-beta.48",
     "match-sorter": "^8.2.0",
     "motion": "^11.18.2",
+    "msw": "^2.15.0",
     "next": "16.2.12",
     "next-themes": "^0.4.6",
     "nuqs": "^2.8.9",
@@ -55,6 +57,7 @@
     "sharp": "^0.35.3",
     "sonner": "^1.7.4",
     "sort-by": "^1.2.0",
+    "swr": "^2.5.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
     "tailwindcss-animate": "^1.0.7",
@@ -77,6 +80,7 @@
     "@types/sort-by": "^1.2.3",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
+    "orval": "^7.13.2",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
     "semantic-release": "^24.2.9",

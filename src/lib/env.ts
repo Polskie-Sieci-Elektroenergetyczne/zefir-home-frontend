@@ -5,7 +5,8 @@ export const Env = createEnv({
   server: {
     BUILD_STANDALONE: z.enum(['true', 'false']),
     SENTRY_AUTH_TOKEN: z.string().min(1).startsWith('sntrys_'),
-    NEXT_RUNTIME: z.enum(['nodejs', 'edge'])
+    NEXT_RUNTIME: z.enum(['nodejs', 'edge']),
+    API_URL: z.string()
   },
   client: {
     NEXT_PUBLIC_SENTRY_DSN: z.string(),
@@ -20,6 +21,7 @@ export const Env = createEnv({
   runtimeEnv: {
     BUILD_STANDALONE: process.env.BUILD_STANDALONE,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+    API_URL: process.env.API_URL,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
     NEXT_PUBLIC_SENTRY_ORG: process.env.NEXT_PUBLIC_SENTRY_ORG,
     NEXT_PUBLIC_SENTRY_PROJECT: process.env.NEXT_PUBLIC_SENTRY_PROJECT,
