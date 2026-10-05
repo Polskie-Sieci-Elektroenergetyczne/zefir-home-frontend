@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { StatsErrorAlert } from '@/features/overview/components/stats-error';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n';
 import { useEffect, useTransition } from 'react';
 import * as Sentry from '@sentry/nextjs';
 
