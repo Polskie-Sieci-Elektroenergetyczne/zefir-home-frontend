@@ -1,12 +1,14 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vitest/config';
+import { loadEnv } from 'vite';
+import { ConfigEnv, defineConfig } from 'vitest/config';
 
-export default defineConfig({
+export default defineConfig(({ mode }: ConfigEnv) => ({
   plugins: [react()],
   resolve: { tsconfigPaths: true },
   test: {
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
+    setupFiles: ['./src/test/setup.ts'],
+    env: loadEnv(mode, process.cwd(), ''),
     coverage: {
       include: ['src/**/*.{js,jsx,ts,tsx}'],
       exclude: ['src/api/**', 'src/test/**', 'src/**/*.stories.{js,jsx,ts,tsx}']
@@ -25,9 +27,10 @@ export default defineConfig({
         test: {
           name: 'integration',
           include: ['src/**/*.int.test.{ts,tsx}'],
+          setupFiles: ['./src/test/setup.integration.ts'],
           testTimeout: 5_000
         }
       }
-    ],
-  },
-});
+    ]
+  }
+}));
