@@ -3,6 +3,7 @@
 import { FormikProvider, useFormik } from 'formik';
 import { useState } from 'react';
 import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { SelectField } from '@/components/forms/fields/select-field';
 import { TextField } from '@/components/forms/fields/text-field';
@@ -53,7 +54,7 @@ export default function SheetProductForm() {
 
   const formik = useFormik<ProductFormValues>({
     initialValues,
-    validationSchema: productSchema,
+    validationSchema: toFormikValidationSchema(productSchema),
     onSubmit: () => {
       alert('Product created successfully!');
       setOpen(false);

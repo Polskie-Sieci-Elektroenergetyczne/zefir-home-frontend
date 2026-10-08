@@ -4,6 +4,7 @@ import { FormikProvider, useFormik } from 'formik';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { SelectField } from '@/components/forms/fields/select-field';
 import { SliderField } from '@/components/forms/fields/slider-field';
@@ -68,7 +69,7 @@ function SheetFormSection() {
       price: undefined,
       description: ''
     },
-    validationSchema: sheetFormSchema,
+    validationSchema: toFormikValidationSchema(sheetFormSchema),
     onSubmit: (values) => {
       toast.success('Product created successfully!', {
         description: `${values.name} has been added.`
@@ -177,7 +178,7 @@ function DialogFormSection() {
       rating: 5,
       feedback: ''
     },
-    validationSchema: dialogFormSchema,
+    validationSchema: toFormikValidationSchema(dialogFormSchema),
     onSubmit: (values) => {
       toast.success('Feedback submitted!', {
         description: `Rating: ${values.rating}/10. Thank you!`

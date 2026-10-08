@@ -4,6 +4,7 @@ import { FieldArray, FormikProvider, getIn, useFormik } from 'formik';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { SelectField } from '@/components/forms/fields/select-field';
 import { TextField } from '@/components/forms/fields/text-field';
@@ -152,7 +153,7 @@ function useUsernameAvailability(
 export default function AdvancedFormPatterns() {
   const formik = useFormik<AdvancedFormValues>({
     initialValues,
-    validationSchema: advancedSchema,
+    validationSchema: toFormikValidationSchema(advancedSchema),
     onSubmit: () => {
       toast.success('Team registered successfully!');
     }

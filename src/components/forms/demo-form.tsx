@@ -4,6 +4,7 @@ import { FormikProvider, useFormik } from 'formik';
 import * as React from 'react';
 import type { DateRange } from 'react-day-picker';
 import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { Icons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
@@ -186,7 +187,7 @@ function useEmailAvailabilityValidation(
 export default function DemoForm() {
   const formik = useFormik<DemoFormValues>({
     initialValues,
-    validationSchema: demoFormSchema,
+    validationSchema: toFormikValidationSchema(demoFormSchema),
     validateOnBlur: true,
     validateOnChange: true,
     onSubmit: async () => {

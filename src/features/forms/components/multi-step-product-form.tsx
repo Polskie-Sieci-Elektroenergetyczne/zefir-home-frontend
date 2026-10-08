@@ -4,6 +4,7 @@ import { FormikProvider, useFormik } from 'formik';
 import { AnimatePresence, motion } from 'motion/react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { SelectField } from '@/components/forms/fields/select-field';
 import { TextField } from '@/components/forms/fields/text-field';
@@ -88,7 +89,7 @@ export default function MultiStepProductForm() {
     initialValues,
     // Full validation still guards a real Formik submit. Step navigation uses
     // the individual schemas in useFormStepper instead of validateForm().
-    validationSchema: productFormSchema,
+    validationSchema: toFormikValidationSchema(productFormSchema),
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {
