@@ -1,28 +1,19 @@
-import { createParser } from "nuqs/server";
-import { z } from "zod";
+import { createParser } from 'nuqs/server';
+import { z } from 'zod';
 
-import { dataTableConfig } from "@/config/data-table";
+import { dataTableConfig } from '@/config/data-table';
 
-import type {
-  ExtendedColumnFilter,
-  ExtendedColumnSort,
-} from "@/types/data-table";
+import type { ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
 
 const sortingItemSchema = z.object({
   id: z.string(),
-  desc: z.boolean(),
+  desc: z.boolean()
 });
 
 const sortingSchema = z.array(sortingItemSchema);
 
-export const getSortingStateParser = <TData>(
-  columnIds?: string[] | Set<string>,
-) => {
-  const validKeys = columnIds
-    ? columnIds instanceof Set
-      ? columnIds
-      : new Set(columnIds)
-    : null;
+export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>) => {
+  const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
 
   return createParser({
     parse: (value) => {
@@ -46,10 +37,7 @@ export const getSortingStateParser = <TData>(
     serialize: (value) => JSON.stringify(value),
     eq: (a, b) =>
       a.length === b.length &&
-      a.every(
-        (item, index) =>
-          item.id === b[index]?.id && item.desc === b[index]?.desc,
-      ),
+      a.every((item, index) => item.id === b[index]?.id && item.desc === b[index]?.desc)
   });
 };
 
@@ -58,21 +46,15 @@ const filterItemSchema = z.object({
   value: z.union([z.string(), z.array(z.string())]),
   variant: z.enum(dataTableConfig.filterVariants),
   operator: z.enum(dataTableConfig.operators),
-  filterId: z.string(),
+  filterId: z.string()
 });
 
 const filtersSchema = z.array(filterItemSchema);
 
 export type FilterItemSchema = z.infer<typeof filterItemSchema>;
 
-export const getFiltersStateParser = <TData>(
-  columnIds?: string[] | Set<string>,
-) => {
-  const validKeys = columnIds
-    ? columnIds instanceof Set
-      ? columnIds
-      : new Set(columnIds)
-    : null;
+export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>) => {
+  const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
 
   return createParser({
     parse: (value) => {
@@ -101,7 +83,7 @@ export const getFiltersStateParser = <TData>(
           filter.id === b[index]?.id &&
           filter.value === b[index]?.value &&
           filter.variant === b[index]?.variant &&
-          filter.operator === b[index]?.operator,
-      ),
+          filter.operator === b[index]?.operator
+      )
   });
 };

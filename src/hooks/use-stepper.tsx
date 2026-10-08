@@ -1,11 +1,6 @@
-import {
-  setIn,
-  type FormikErrors,
-  type FormikProps,
-  type FormikTouched,
-} from "formik";
-import { useCallback, useState } from "react";
-import { z } from "zod";
+import { setIn, type FormikErrors, type FormikProps, type FormikTouched } from 'formik';
+import { useCallback, useState } from 'react';
+import { z } from 'zod';
 
 type HandleCancelOrBackOpts = {
   onBack?: VoidFunction;
@@ -44,7 +39,7 @@ function getFormikValidationState<TValues>(issues: z.ZodIssue[]): {
   for (const issue of issues) {
     if (issue.path.length === 0) continue;
 
-    const path = issue.path.join(".");
+    const path = issue.path.join('.');
 
     // Keep the first error for a field.
     if (!getPath(errors, path)) {
@@ -58,8 +53,8 @@ function getFormikValidationState<TValues>(issues: z.ZodIssue[]): {
 }
 
 function getPath(value: unknown, path: string): unknown {
-  return path.split(".").reduce<unknown>((current, key) => {
-    if (current == null || typeof current !== "object") {
+  return path.split('.').reduce<unknown>((current, key) => {
+    if (current == null || typeof current !== 'object') {
       return undefined;
     }
 
@@ -69,7 +64,7 @@ function getPath(value: unknown, path: string): unknown {
 
 async function validateWithSchema<TValues>(
   schema: z.ZodType,
-  values: TValues,
+  values: TValues
 ): Promise<
   | { success: true }
   | {
@@ -86,7 +81,7 @@ async function validateWithSchema<TValues>(
 
   return {
     success: false,
-    ...getFormikValidationState<TValues>(result.error.issues),
+    ...getFormikValidationState<TValues>(result.error.issues)
   };
 }
 
@@ -97,10 +92,7 @@ async function validateWithSchema<TValues>(
  * stay pristine. The final step validates the complete schema before Formik's
  * submit handler is allowed to run.
  */
-export function useFormStepper(
-  schemas: AnyObjectSchema[],
-  options?: UseFormStepperOptions,
-) {
+export function useFormStepper(schemas: AnyObjectSchema[], options?: UseFormStepperOptions) {
   const stepCount = schemas.length;
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -116,7 +108,7 @@ export function useFormStepper(
     (nextStep: number) => {
       setCurrentStep(Math.min(Math.max(nextStep, 1), stepCount));
     },
-    [stepCount],
+    [stepCount]
   );
 
   const step: StepState = {
@@ -125,7 +117,7 @@ export function useFormStepper(
     goToNextStep,
     goToPrevStep,
     goToStep,
-    isCompleted: currentStep === stepCount,
+    isCompleted: currentStep === stepCount
   };
 
   const currentValidator = schemas[currentStep - 1];
@@ -144,9 +136,7 @@ export function useFormStepper(
     return true;
   };
 
-  const handleNextStepOrSubmit = async <TValues,>(
-    form: FormikProps<TValues>,
-  ) => {
+  const handleNextStepOrSubmit = async <TValues,>(form: FormikProps<TValues>) => {
     const currentStepIsValid = await triggerFormGroup(form);
 
     if (!currentStepIsValid) {
@@ -159,10 +149,7 @@ export function useFormStepper(
     }
 
     if (options?.fullSchema) {
-      const fullResult = await validateWithSchema(
-        options.fullSchema,
-        form.values,
-      );
+      const fullResult = await validateWithSchema(options.fullSchema, form.values);
 
       if (!fullResult.success) {
         const failingStep = await findFirstFailingStep(schemas, form.values);
@@ -199,14 +186,11 @@ export function useFormStepper(
     currentValidator,
     triggerFormGroup,
     handleNextStepOrSubmit,
-    handleCancelOrBack,
+    handleCancelOrBack
   };
 }
 
-async function findFirstFailingStep<TValues>(
-  schemas: AnyObjectSchema[],
-  values: TValues,
-) {
+async function findFirstFailingStep<TValues>(schemas: AnyObjectSchema[], values: TValues) {
   for (let index = 0; index < schemas.length; index += 1) {
     const result = await schemas[index].safeParseAsync(values);
 
