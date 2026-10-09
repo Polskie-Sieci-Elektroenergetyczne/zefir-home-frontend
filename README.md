@@ -217,6 +217,15 @@ docker run -it `
 
 The image must already be downloaded. It provides Node.js and npm; Git must also be available for the next step.
 
+Alternatively, use the included docker-compose.yml file. From the directory containing that file, run:
+
+```bash
+docker compose up -d
+docker compose exec zefir-dev bash
+```
+
+This starts the container in the background and opens a Bash shell inside it. Use either this approach or the docker run command above, then continue with step 2.
+
 ### 2. Clone the repository inside the container
 
 Run these commands in the container’s shell, replacing the URL with the repository’s actual URL:
