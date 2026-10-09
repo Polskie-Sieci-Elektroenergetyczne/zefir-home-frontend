@@ -199,6 +199,86 @@ Deploy to Vercel out of the box, or use the included Docker setup: a Node.js Doc
 
 Deploy to Vercel out of the box, or use the included Docker setup: a Node.js Dockerfile. Full guide: [docs/deployment.md](./docs/deployment.md).
 
+## Development in Docker with Turbopack
+
+Keep the repository on the container’s Linux filesystem and edit it through VS Code Dev Containers. This setup provides fast file access and working Fast Refresh.
+
+### 1. Create the container
+
+With Docker running, execute this in Windows PowerShell:
+
+```bash
+docker run -it `
+  --name zefir-dev `
+  -p 127.0.0.1:3000:3000 `
+  --entrypoint sh `
+  sha256:{node_js_image}
+```
+
+The image must already be downloaded. It provides Node.js and npm; Git must also be available for the next step.
+
+Alternatively, use the included docker-compose.yml file. From the directory containing that file, run:
+
+```bash
+docker compose up -d
+docker compose exec zefir-dev bash
+```
+
+By default, Docker Compose uses the official node:24-bookworm image, providing Node.js 24 and npm on Debian 12. To use a different image, set the DOCKER_IMAGE environment variable before running docker compose up -d.
+
+This starts the container in the background and opens a Bash shell inside it. Use either this approach or the docker run command above, then continue with step 2.
+
+### 2. Clone the repository inside the container
+
+Run these commands in the container’s shell, replacing the URL with the repository’s actual URL:
+
+```bash
+mkdir -p /root/projects
+cd /root/projects
+git clone <REPOSITORY_URL> zefir-home-frontend
+cd zefir-home-frontend
+npm ci
+```
+
+Configure any required company proxy settings for Git and npm before cloning or installing.
+
+Do not bind-mount the Windows repository into this workspace. Keeping the files on Linux storage avoids the file-watching and performance problems observed with Windows-mounted folders.
+
+### 3. Open the repository in VS Code
+
+Install Microsoft’s Dev Containers extension in VS Code.
+
+Press Ctrl+Shift+P, select Dev Containers: Attach to Running Container…, and choose zefir-dev.
+
+In the attached window, use File → Open Folder and open: `/root/projects/zefir-home-frontend`.
+
+### 4. Start Next.js
+
+From the attached VS Code terminal, run:
+```bash
+npm run dev -- --hostname 0.0.0.0 --port 3000
+```
+
+The project’s dev script is next dev, which uses Turbopack in Next.js 16.
+
+Open `http://localhost:3000` in your Windows browser. Save a change to a component in the attached VS Code window to verify Fast Refresh.
+
+### 5. Stop and resume development
+
+To finish, press Ctrl+C to stop Next.js. To stop the container, run this in PowerShell:
+```bash
+docker stop zefir-dev
+```
+
+To return later:
+```bash
+docker start zefir-dev
+```
+
+Attach VS Code again, open the repository, and run the development command from step 4. Dependencies do not need reinstalling unless they change.
+
+The repository and installed dependencies survive container restarts, but deleting the container deletes this workspace. Push your work to Git regularly.
+
 ### Support
 
 If this template saved you some time, a star is appreciated. You can also [buy me a coffee](https://buymeacoffee.com/kir4n) if you'd like.
