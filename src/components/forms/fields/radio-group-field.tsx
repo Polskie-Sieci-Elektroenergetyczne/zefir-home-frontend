@@ -1,5 +1,7 @@
 'use client';
 
+import { useField } from 'formik';
+
 import {
   Field,
   FieldDescription,
@@ -9,18 +11,29 @@ import {
   FieldSet
 } from '@/components/ui/field';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useFieldContext, useFieldInvalid, type BaseFieldProps } from '@/lib/form-context';
+
+export interface RadioGroupFieldProps {
+  name: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+  options: {
+    value: string;
+    label: string;
+    disabled?: boolean;
+  }[];
+}
 
 export function RadioGroupField({
+  name,
   label,
   description,
   required,
   options
-}: BaseFieldProps & {
-  options: { value: string; label: string; disabled?: boolean }[];
-}) {
-  const field = useFieldContext<string>();
-  const isInvalid = useFieldInvalid();
+}: RadioGroupFieldProps) {
+  const [field, meta, helpers] = useField<string>(name);
+
+  const isInvalid = meta.touched && Boolean(meta.error);
 
   return (
     <FieldSet>
@@ -28,35 +41,44 @@ export function RadioGroupField({
         {label}
         {required && ' *'}
       </FieldLegend>
+
       {description && <FieldDescription>{description}</FieldDescription>}
+
       <RadioGroup
         name={field.name}
-        value={field.state.value}
-        onValueChange={field.handleChange}
-        onBlur={field.handleBlur}
+        value={field.value}
+        onValueChange={(value) => {
+          void helpers.setValue(value);
+          void helpers.setTouched(true);
+        }}
+        onBlur={() => {
+          void helpers.setTouched(true);
+        }}
         className='flex flex-wrap gap-x-6 gap-y-2'
       >
-        {options.map((opt) => (
+        {options.map((option) => (
           <Field
-            key={opt.value}
+            key={option.value}
             orientation='horizontal'
-            data-invalid={isInvalid}
+            data-invalid={isInvalid || undefined}
             className='w-auto'
           >
             <RadioGroupItem
-              value={opt.value}
-              id={`${field.name}-${opt.value}`}
-              disabled={opt.disabled}
-              aria-invalid={isInvalid}
-              aria-describedby={isInvalid ? `${field.name}-error` : undefined}
+              value={option.value}
+              id={`${name}-${option.value}`}
+              disabled={option.disabled}
+              aria-invalid={isInvalid || undefined}
+              aria-describedby={isInvalid ? `${name}-error` : undefined}
             />
-            <FieldLabel htmlFor={`${field.name}-${opt.value}`} className='font-normal'>
-              {opt.label}
+
+            <FieldLabel htmlFor={`${name}-${option.value}`} className='font-normal'>
+              {option.label}
             </FieldLabel>
           </Field>
         ))}
       </RadioGroup>
-      {isInvalid && <FieldError id={`${field.name}-error`} errors={field.state.meta.errors} />}
+
+      {isInvalid && <FieldError id={`${name}-error`} errors={[{ message: meta.error }]} />}
     </FieldSet>
   );
 }
