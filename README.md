@@ -27,7 +27,7 @@ A free, open source (MIT) admin dashboard starter built with Next.js 16, shadcn/
 
 Every feature is a working, production-ready implementation, not static demo UI. Tables search, filter, sort, and paginate for real. Forms validate and mutate with cache invalidation.
 
-Clone it, strip what you don't need with the built-in cleanup script, and start building on patterns you'd write yourself. It works well as a base for SaaS apps, internal tools, and admin panels.
+Clone it, strip what you don't need and start building on patterns you'd write yourself. It works well as a base for SaaS apps, internal tools, and admin panels.
 
 ### Why This Template
 
@@ -35,7 +35,7 @@ Most dashboard templates are static demo boilerplates: screens that look finishe
 
 - **Everything actually works.** Data tables run end-to-end: server prefetch, client-side React Query cache, and URL-synced search, filtering, sorting, and pagination via nuqs. Forms are built from reusable, composable fields with Zod validation, including advanced patterns like multi-step and dialog/sheet forms, with real create/update mutations and cache invalidation on success.
 - **Industry-standard implementations.** The data layer follows the official TanStack Query SSR pattern (server prefetch + `HydrationBoundary` + `useSuspenseQuery`), typed end to end, organized in a feature-based structure with a clean API layer per feature. These are patterns you copy into production code as-is, not mockups you rebuild from scratch.
-- **Minimal by design.** Deliberately lean, with no bloated boilerplate, so you spend your time tweaking it to your use case, not deleting someone else's code. The built-in [cleanup script](#cleanup-script-start-minimal-in-60-seconds) strips any feature you don't need in under a minute.
+- **Minimal by design.** Deliberately lean, with no bloated boilerplate, so you spend your time tweaking it to your use case, not deleting someone else's code.
 
 ### Tech Stack
 
@@ -155,33 +155,17 @@ The app should now be running at http://localhost:3000.
 
 ---
 
-## Cleanup Script: Start Minimal in 60 Seconds
-
-Most starters make you hand-delete demo pages and rip out dependencies. This one ships with a cleanup script that removes the optional features you don't need (folders, files, dependencies, docs, and env entries), leaving a minimal base to build on. Run `--list` to see what's removable:
-
-```bash
-npm run cleanup --interactive    # interactive mode
-npm run cleanup --list           # see available features
-npm run cleanup --dry-run chat   # preview before removing
-npm run cleanup kanban chat      # remove specific features
-```
-
-Run `npm run cleanup --help` for all options (with npm, pass flags after `--`: `npm run cleanup -- --list`). The replacement files it writes live in `scripts/cleanup-templates/` as real, typechecked code. When you're done, delete `scripts/cleanup.js`, `scripts/cleanup-templates/`, and the `cleanup` entry in `package.json`.
-
 ## FAQ
 
 **Is it production ready?**
 Yes. Every feature is a complete, working implementation: authentication, CRUD flows, table search/filter/sort/pagination, and form validation with mutations all function end-to-end. It's a starting point for real applications, not a visual mockup.
 
 **How is this different from other dashboard templates?**
-Most dashboard templates are static demo boilerplates: screens that look finished but need rebuilding once you wire in real data. Here the tables, forms, auth, organizations, and billing all work end-to-end, the implementations follow official TanStack and Next.js patterns, and a cleanup script keeps the base minimal so you tweak it to your use case instead of deleting code.
+Most dashboard templates are static demo boilerplates: screens that look finished but need rebuilding once you wire in real data. Here the tables, forms, auth, organizations, and billing all work end-to-end, the implementations follow official TanStack and Next.js patterns.
 
 **Is it free for commercial use?**
 Yes. MIT-licensed and free for both personal and commercial projects: no paid tier, no license keys.
 
-
-**How do I remove demo pages or features I don't need?**
-Run `npm run cleanup --interactive` and pick what to strip, or `npm run cleanup --list` to see what can be removed.
 
 **Does it support Next.js 16, React 19, and Tailwind CSS v4?**
 Yes. The template is built on Next.js 16 (App Router), React 19, and Tailwind CSS v4, with shadcn/ui on Base UI primitives, and is actively maintained to track new releases.
