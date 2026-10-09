@@ -1,6 +1,6 @@
 services:
   zefir-dev:
-    image: ${DOCKER_IMAGE}
+    image: ${DOCKER_IMAGE:-node:24-bookworm}
     container_name: zefir-dev
     stdin_open: true
     tty: true

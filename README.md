@@ -224,6 +224,8 @@ docker compose up -d
 docker compose exec zefir-dev bash
 ```
 
+By default, Docker Compose uses the official node:24-bookworm image, providing Node.js 24 and npm on Debian 12. To use a different image, set the DOCKER_IMAGE environment variable before running docker compose up -d.
+
 This starts the container in the background and opens a Bash shell inside it. Use either this approach or the docker run command above, then continue with step 2.
 
 ### 2. Clone the repository inside the container
