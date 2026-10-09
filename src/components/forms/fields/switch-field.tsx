@@ -1,5 +1,7 @@
 'use client';
 
+import { useField } from 'formik';
+
 import {
   Field,
   FieldContent,
@@ -8,29 +10,42 @@ import {
   FieldLabel
 } from '@/components/ui/field';
 import { Switch } from '@/components/ui/switch';
-import { useFieldContext, useFieldInvalid, type BaseFieldProps } from '@/lib/form-context';
 
-export function SwitchField({ label, description, required }: BaseFieldProps) {
-  const field = useFieldContext<boolean>();
-  const isInvalid = useFieldInvalid();
+export interface SwitchFieldProps {
+  name: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+}
+
+export function SwitchField({ name, label, description, required }: SwitchFieldProps) {
+  const [field, meta, helpers] = useField<boolean>(name);
+
+  const isInvalid = meta.touched && Boolean(meta.error);
 
   return (
-    <Field orientation='horizontal' data-invalid={isInvalid}>
+    <Field orientation='horizontal' data-invalid={isInvalid || undefined}>
       <FieldContent>
-        <FieldLabel htmlFor={field.name}>
+        <FieldLabel htmlFor={name}>
           {label}
           {required && ' *'}
         </FieldLabel>
+
         {description && <FieldDescription>{description}</FieldDescription>}
-        {isInvalid && <FieldError id={`${field.name}-error`} errors={field.state.meta.errors} />}
+
+        {isInvalid && <FieldError id={`${name}-error`} errors={[{ message: meta.error }]} />}
       </FieldContent>
+
       <Switch
-        id={field.name}
+        id={name}
         name={field.name}
-        checked={field.state.value}
-        onCheckedChange={field.handleChange}
-        aria-invalid={isInvalid}
-        aria-describedby={isInvalid ? `${field.name}-error` : undefined}
+        checked={field.value}
+        onCheckedChange={(checked) => {
+          void helpers.setValue(checked);
+          void helpers.setTouched(true);
+        }}
+        aria-invalid={isInvalid || undefined}
+        aria-describedby={isInvalid ? `${name}-error` : undefined}
       />
     </Field>
   );
