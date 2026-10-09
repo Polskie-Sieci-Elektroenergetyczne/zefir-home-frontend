@@ -11,7 +11,6 @@
     "build": "next build",
     "start": "next start",
     "release": "semantic-release",
-    "cleanup": "node scripts/cleanup.js",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix && npm run format",
