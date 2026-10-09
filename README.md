@@ -19,7 +19,6 @@
   <a href="https://github.com/Kiranism/next-shadcn-dashboard-starter/network/members"><img src="https://img.shields.io/github/forks/Kiranism/next-shadcn-dashboard-starter?style=social" alt="Forks" /></a>
   <a href="https://github.com/Kiranism/next-shadcn-dashboard-starter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Kiranism/next-shadcn-dashboard-starter" alt="MIT License" /></a>
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js" />
-  <a href="https://go.clerk.com/ILdYhn7"><img src="https://img.shields.io/badge/Sponsored_by-Clerk-6C47FF?style=flat-square&logo=clerk" alt="Sponsored by Clerk" /></a>
 </p>
 
 ## Overview
@@ -27,7 +26,6 @@
 A free, open source (MIT) admin dashboard starter built with Next.js 16, shadcn/ui on Base UI primitives, TypeScript, and Tailwind CSS v4.
 
 Every feature is a working, production-ready implementation, not static demo UI. Tables search, filter, sort, and paginate for real. Forms validate and mutate with cache invalidation.
-Auth, organizations, and billing function end-to-end.
 
 Clone it, strip what you don't need with the built-in cleanup script, and start building on patterns you'd write yourself. It works well as a base for SaaS apps, internal tools, and admin panels.
 
@@ -43,7 +41,6 @@ Most dashboard templates are static demo boilerplates: screens that look finishe
 
 - Framework - [Next.js 16](https://nextjs.org/16)
 - Language - [TypeScript](https://www.typescriptlang.org)
-- Auth - [Clerk](https://go.clerk.com/ILdYhn7)
 - Error tracking - [Sentry](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)
 - Styling - [Tailwind CSS v4](https://tailwindcss.com)
 - Components - [shadcn/ui](https://ui.shadcn.com) on [Base UI](https://base-ui.com) primitives
@@ -66,10 +63,6 @@ _Looking for a TanStack Start version? Here's the [repo](https://git.new/tanstac
 - Pre-built dashboard layout with sidebar, header, and content area
 - Analytics overview page with cards and charts
 - Data tables with React Query prefetch, client-side cache, search, filter, and pagination
-- Authentication and user management through Clerk
-- Multi-tenant workspaces using Clerk Organizations (create, switch, manage teams)
-- Billing and subscriptions via Clerk Billing for B2B, with plan management and feature gating
-- Client-side RBAC navigation that filters menu items by organization, permissions, and roles
 - Infobar component for tips, status messages, or contextual notes on any page
 - shadcn/ui components on Base UI primitives, styled with Tailwind CSS
 - Six-plus themes with a theme switcher
@@ -90,21 +83,12 @@ A few things you can build with it:
 
 | Page                                                                                                                                                                  | Notes                                                                                                                                                                                |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Signup / Signin](https://go.clerk.com/ILdYhn7)                                                                                                                       | Auth handled by Clerk, with passwordless sign-in, social logins, and enterprise SSO. |
 | [Dashboard Overview](https://shadcn-dashboard.kiranism.dev/dashboard)                                                                                                 | Cards and Recharts graphs. Parallel routes give each section its own loading and error state.                                                                                       |
 | [Product List (Table)](https://shadcn-dashboard.kiranism.dev/dashboard/product)                                                                                       | TanStack Table plus React Query (server prefetch, client cache) with nuqs URL state for search, filter, and pagination. `shallow: true` keeps interactions on the client.           |
 | [Create Product Form](https://shadcn-dashboard.kiranism.dev/dashboard/product/new)                                                                                    | TanStack Form and Zod with `useMutation` for create and update. Cache is invalidated on success.                                                                                    |
 | [Users (Table)](https://shadcn-dashboard.kiranism.dev/dashboard/users)                                                                                                | Same setup as Products: React Query with nuqs, server prefetch, and client-side pagination and filtering.                                                                           |
 | [React Query Demo](https://shadcn-dashboard.kiranism.dev/dashboard/react-query)                                                                                       | A Pokemon API example showing the server prefetch, `HydrationBoundary`, and `useSuspenseQuery` pattern with client-side cache. |
-| [Profile](https://shadcn-dashboard.kiranism.dev/dashboard/profile)                                                                                                   | Clerk's account management UI for profile and security settings. |
-| [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)                                                                                                | Drag-and-drop task board built with dnd-kit and Zustand. Column sorting, priority badges, assignees, and due dates. |
-| [Chat](https://shadcn-dashboard.kiranism.dev/dashboard/chat)                                                                                                          | Messaging UI with a conversation list, message bubbles, quick replies, attachments, and an auto-reply demo. Multi-panel layout that works on mobile. |
-| [AI Chat](https://shadcn-dashboard.kiranism.dev/dashboard/ai-chat)                                                                                                    | Scripted AI chat that streams a predefined conversation through the real `useChat` lifecycle — no model, API route, or key. Built with the shadcn chat components (MessageScroller, Bubble, Marker). |
 | [Notifications](https://shadcn-dashboard.kiranism.dev/dashboard/notifications)                                                                                        | Notification center with a header badge, popover preview, and a full page with All / Unread / Read tabs. Includes mark-as-read and mark-all-as-read. |
-| [Workspaces](https://shadcn-dashboard.kiranism.dev/dashboard/workspaces)                                                                                              | Organization management using Clerk's `<OrganizationList />`. View, create, and switch between organizations. |
-| [Team Management](https://shadcn-dashboard.kiranism.dev/dashboard/workspaces/team)                                                                                    | Team management using Clerk's `<OrganizationProfile />`. Manage members, roles, permissions, security, and org details. Needs an active organization. |
-| [Billing & Plans](https://shadcn-dashboard.kiranism.dev/dashboard/billing)                                                                                            | Billing page using Clerk's `<PricingTable />`. View plans, subscribe, and manage subscriptions. Needs an active organization. |
-| [Exclusive Page](https://shadcn-dashboard.kiranism.dev/dashboard/exclusive)                                                                                           | Plan-based access control with Clerk's `<Protect>`. Only available to organizations on the Pro plan, with a fallback UI for everyone else. |
 | [Not Found](https://shadcn-dashboard.kiranism.dev/dashboard/notfound)                                                                                                 | A root-level not-found page.                                                                                                                                                        |
 | [Global Error](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree) | A shared error page wired to Sentry for logging, reports, and session replay. |
 
@@ -113,20 +97,12 @@ A few things you can build with it:
 ```plaintext
 src/
 ├── app/                           # Next.js App Router directory
-│   ├── auth/                      # Auth pages (sign-in, sign-up)
 │   ├── dashboard/                 # Dashboard route group
 │   │   ├── overview/              # Analytics with parallel routes
 │   │   ├── product/               # Product CRUD pages (React Query)
 │   │   ├── users/                 # Users table (React Query + nuqs)
 │   │   ├── react-query/           # React Query demo page
-│   │   ├── kanban/                # Task board page
-│   │   ├── chat/                  # Messaging page
-│   │   ├── ai-chat/               # AI chat streaming demo
 │   │   ├── notifications/         # Notifications page
-│   │   ├── workspaces/            # Org management & teams
-│   │   ├── billing/               # Billing & plans
-│   │   ├── profile/               # User profile
-│   │   └── exclusive/             # Plan-gated page
 │   └── api/                       # API routes
 │
 ├── components/                    # Shared components
@@ -140,12 +116,7 @@ src/
 │   ├── products/                  # Product listing, form, tables (React Query)
 │   ├── users/                     # User management table (React Query)
 │   ├── react-query-demo/          # React Query demo (Pokemon API)
-│   ├── kanban/                    # Drag-drop task board
-│   ├── chat/                      # Messaging (conversations, bubbles, composer)
-│   ├── ai-chat/                   # Scripted useChat streaming demo (shadcn chat UI)
 │   ├── notifications/             # Notification center & store
-│   ├── auth/                      # Auth components
-│   └── profile/                   # Profile form schemas
 │
 ├── lib/                           # Core utilities (query-client, searchparams, etc.)
 ├── hooks/                         # Custom hooks
@@ -167,18 +138,15 @@ Clone the repo:
 git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
 ```
 
-- `bun install`
+- `npm install`
 - Copy the example env file: `cp env.example.txt .env.local`
 - Fill in the required variables in `.env.local`
-- `bun run dev`
+- `npm run dev`
 
 ##### Environment variables
 
 See `env.example.txt` for the variables you need. They cover authentication and error tracking.
 
-##### Clerk setup
-
-For setting up Clerk auth (including organizations, workspaces, and teams), see [clerk_setup.md](./docs/clerk_setup.md).
 
 The app should now be running at http://localhost:3000.
 
@@ -192,13 +160,13 @@ The app should now be running at http://localhost:3000.
 Most starters make you hand-delete demo pages and rip out dependencies. This one ships with a cleanup script that removes the optional features you don't need (folders, files, dependencies, docs, and env entries), leaving a minimal base to build on. Run `--list` to see what's removable:
 
 ```bash
-bun run cleanup --interactive    # interactive mode
-bun run cleanup --list           # see available features
-bun run cleanup --dry-run chat   # preview before removing
-bun run cleanup kanban chat      # remove specific features
+npm run cleanup --interactive    # interactive mode
+npm run cleanup --list           # see available features
+npm run cleanup --dry-run chat   # preview before removing
+npm run cleanup kanban chat      # remove specific features
 ```
 
-Run `bun run cleanup --help` for all options (with npm, pass flags after `--`: `npm run cleanup -- --list`). The replacement files it writes live in `scripts/cleanup-templates/` as real, typechecked code. When you're done, delete `scripts/cleanup.js`, `scripts/cleanup-templates/`, and the `cleanup` entry in `package.json`.
+Run `npm run cleanup --help` for all options (with npm, pass flags after `--`: `npm run cleanup -- --list`). The replacement files it writes live in `scripts/cleanup-templates/` as real, typechecked code. When you're done, delete `scripts/cleanup.js`, `scripts/cleanup-templates/`, and the `cleanup` entry in `package.json`.
 
 ## FAQ
 
@@ -211,17 +179,12 @@ Most dashboard templates are static demo boilerplates: screens that look finishe
 **Is it free for commercial use?**
 Yes. MIT-licensed and free for both personal and commercial projects: no paid tier, no license keys.
 
-**Can I use it without Clerk?**
-Yes. Run `bun run cleanup clerk` to remove Clerk authentication (along with organizations and billing) and wire in your own auth solution.
 
 **How do I remove demo pages or features I don't need?**
-Run `bun run cleanup --interactive` and pick what to strip, or `bun run cleanup --list` to see what can be removed.
+Run `npm run cleanup --interactive` and pick what to strip, or `npm run cleanup --list` to see what can be removed.
 
 **Does it support Next.js 16, React 19, and Tailwind CSS v4?**
 Yes. The template is built on Next.js 16 (App Router), React 19, and Tailwind CSS v4, with shadcn/ui on Base UI primitives, and is actively maintained to track new releases.
-
-**Can I use npm instead of Bun?**
-Yes. Bun is preferred, but npm works too, and the repo even ships both Node.js and Bun Dockerfiles for deployment.
 
 **Does it work with AI coding assistants?**
 Yes. The repo ships AGENTS.md and CLAUDE.md with the project's conventions, plus a bundled Claude Code skill (`.claude/skills/kiranism-shadcn-dashboard`) that teaches agents how to add pages, tables, forms, and navigation the template way. Works with Claude Code, Cursor, and any tool that reads AGENTS.md.
@@ -230,11 +193,91 @@ Yes. The repo ships AGENTS.md and CLAUDE.md with the project's conventions, plus
 TanStack React Query with the official SSR pattern: `prefetchQuery` on the server, `HydrationBoundary` with `dehydrate` for hydration, and `useSuspenseQuery` on the client, plus nuqs for URL-synced search-param state. Mutations invalidate the cache on success.
 
 **How do I deploy it?**
-Deploy to Vercel out of the box, or use the included Docker setups: a Node.js Dockerfile and a Bun Dockerfile, both using Next.js standalone output mode. See the [deployment guide](./docs/deployment.md).
+Deploy to Vercel out of the box, or use the included Docker setup: a Node.js Dockerfile. See the [deployment guide](./docs/deployment.md).
 
 ## Deploy
 
-Deploy to Vercel out of the box, or use the included Docker setups: a Node.js Dockerfile and a Bun Dockerfile, both using Next.js standalone output mode. Full guide: [docs/deployment.md](./docs/deployment.md).
+Deploy to Vercel out of the box, or use the included Docker setup: a Node.js Dockerfile. Full guide: [docs/deployment.md](./docs/deployment.md).
+
+## Development in Docker with Turbopack
+
+Keep the repository on the container’s Linux filesystem and edit it through VS Code Dev Containers. This setup provides fast file access and working Fast Refresh.
+
+### 1. Create the container
+
+With Docker running, execute this in Windows PowerShell:
+
+```bash
+docker run -it `
+  --name zefir-dev `
+  -p 127.0.0.1:3000:3000 `
+  --entrypoint sh `
+  sha256:{node_js_image}
+```
+
+The image must already be downloaded. It provides Node.js and npm; Git must also be available for the next step.
+
+Alternatively, use the included docker-compose.yml file. From the directory containing that file, run:
+
+```bash
+docker compose up -d
+docker compose exec zefir-dev bash
+```
+
+By default, Docker Compose uses the official node:24-bookworm image, providing Node.js 24 and npm on Debian 12. To use a different image, set the DOCKER_IMAGE environment variable before running docker compose up -d.
+
+This starts the container in the background and opens a Bash shell inside it. Use either this approach or the docker run command above, then continue with step 2.
+
+### 2. Clone the repository inside the container
+
+Run these commands in the container’s shell, replacing the URL with the repository’s actual URL:
+
+```bash
+mkdir -p /root/projects
+cd /root/projects
+git clone <REPOSITORY_URL> zefir-home-frontend
+cd zefir-home-frontend
+npm ci
+```
+
+Configure any required company proxy settings for Git and npm before cloning or installing.
+
+Do not bind-mount the Windows repository into this workspace. Keeping the files on Linux storage avoids the file-watching and performance problems observed with Windows-mounted folders.
+
+### 3. Open the repository in VS Code
+
+Install Microsoft’s Dev Containers extension in VS Code.
+
+Press Ctrl+Shift+P, select Dev Containers: Attach to Running Container…, and choose zefir-dev.
+
+In the attached window, use File → Open Folder and open: `/root/projects/zefir-home-frontend`.
+
+### 4. Start Next.js
+
+From the attached VS Code terminal, run:
+```bash
+npm run dev -- --hostname 0.0.0.0 --port 3000
+```
+
+The project’s dev script is next dev, which uses Turbopack in Next.js 16.
+
+Open `http://localhost:3000` in your Windows browser. Save a change to a component in the attached VS Code window to verify Fast Refresh.
+
+### 5. Stop and resume development
+
+To finish, press Ctrl+C to stop Next.js. To stop the container, run this in PowerShell:
+```bash
+docker stop zefir-dev
+```
+
+To return later:
+```bash
+docker start zefir-dev
+```
+
+Attach VS Code again, open the repository, and run the development command from step 4. Dependencies do not need reinstalling unless they change.
+
+The repository and installed dependencies survive container restarts, but deleting the container deletes this workspace. Push your work to Git regularly.
 
 ### Support
 

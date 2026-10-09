@@ -1,0 +1,9 @@
+services:
+  zefir-dev:
+    image: ${DOCKER_IMAGE:-node:24-bookworm}
+    container_name: zefir-dev
+    stdin_open: true
+    tty: true
+    entrypoint: ["sh"]
+    ports:
+      - "127.0.0.1:3000:3000"

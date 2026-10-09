@@ -1,11 +1,12 @@
 // This file configures the initialization of Sentry on the client.
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
+import { Env } from '@/lib/env';
 import * as Sentry from '@sentry/nextjs';
 
-if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
+if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
   Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    dsn: Env.NEXT_PUBLIC_SENTRY_DSN,
 
     // Adds request headers and IP for users, for more info visit
     sendDefaultPii: true,
