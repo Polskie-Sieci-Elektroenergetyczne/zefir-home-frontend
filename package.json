@@ -1,10 +1,9 @@
 {
-  "name": "next-shadcn-dashboard-starter",
+  "name": "zefir-home-frontend",
   "version": "1.0.0",
-  "private": true,
   "author": {
-    "name": "Kiran",
-    "url": "https://github.com/Kiranism"
+    "name": "Polskie Sieci Elektroenergetyczne",
+    "url": "https://github.com/Polskie-Sieci-Elektroenergetyczne"
   },
   "scripts": {
     "dev": "next dev",
