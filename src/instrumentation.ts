@@ -1,11 +1,12 @@
+import { Env } from '@/lib/env';
 import * as Sentry from '@sentry/nextjs';
 
 const sentryOptions: Sentry.NodeOptions | Sentry.EdgeOptions = {
   // Sentry DSN
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  dsn: Env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Enable Spotlight in development
-  spotlight: process.env.NODE_ENV === 'development',
+  spotlight: Env.NODE_ENV === 'development',
 
   // Adds request headers and IP for users, for more info visit
   sendDefaultPii: true,
@@ -18,13 +19,13 @@ const sentryOptions: Sentry.NodeOptions | Sentry.EdgeOptions = {
 };
 
 export async function register() {
-  if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
-    if (process.env.NEXT_RUNTIME === 'nodejs') {
+  if (!Env.NEXT_PUBLIC_SENTRY_DISABLED) {
+    if (Env.NEXT_RUNTIME === 'nodejs') {
       // Node.js Sentry configuration
       Sentry.init(sentryOptions);
     }
 
-    if (process.env.NEXT_RUNTIME === 'edge') {
+    if (Env.NEXT_RUNTIME === 'edge') {
       // Edge Sentry configuration
       Sentry.init(sentryOptions);
     }

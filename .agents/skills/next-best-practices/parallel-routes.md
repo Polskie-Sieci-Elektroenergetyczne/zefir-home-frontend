@@ -100,7 +100,7 @@ export default async function PhotoPage({ params }: { params: Promise<{ id: stri
 // components/modal.tsx
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 
 export function Modal({ children }: { children: React.ReactNode }) {

@@ -1,15 +1,24 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { LoadingButton } from '@/components/ui/loading-button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FieldGroup } from '@/components/ui/field';
-import { useAppForm } from '@/lib/form';
-import { categoryOptions } from '@/features/products/constants/product-options';
-import { productSchema, type ProductFormValues } from '@/features/products/schemas/product';
 import { useMutation } from '@tanstack/react-query';
+import { FormikProvider, useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FieldGroup } from '@/components/ui/field';
+import { LoadingButton } from '@/components/ui/loading-button';
+
+import { FileUploadField } from '@/components/forms/fields/file-upload-field';
+import { SelectField } from '@/components/forms/fields/select-field';
+import { TextField } from '@/components/forms/fields/text-field';
+import { TextareaField } from '@/components/forms/fields/textarea-field';
+
+import { categoryOptions } from '@/features/products/constants/product-options';
+import { productSchema, type ProductFormValues } from '@/features/products/schemas/product';
+
 import { createProductMutation, updateProductMutation } from '../api/mutations';
 import type { Product } from '../api/types';
 
@@ -45,120 +54,102 @@ export default function ProductForm({
     }
   });
 
-  const form = useAppForm({
-    defaultValues: {
+  const formik = useFormik<ProductFormValues>({
+    initialValues: {
       image: undefined,
       name: initialData?.name ?? '',
       category: initialData?.category ?? '',
       price: initialData?.price,
       description: initialData?.description ?? ''
-    } as ProductFormValues,
-    validators: {
-      onSubmit: productSchema
     },
-    onSubmit: ({ value }) => {
+    validationSchema: toFormikValidationSchema(productSchema),
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
       const payload = {
-        name: value.name,
-        category: value.category,
-        price: value.price!,
-        description: value.description
+        name: values.name,
+        category: values.category,
+        price: values.price!,
+        description: values.description
       };
 
-      if (isEdit) {
-        updateMutation.mutate({ id: initialData.id, values: payload });
-      } else {
-        createMutation.mutate(payload);
+      try {
+        if (initialData) {
+          await updateMutation.mutateAsync({
+            id: initialData.id,
+            values: payload
+          });
+        } else {
+          await createMutation.mutateAsync(payload);
+        }
+      } catch {
+        // The mutation's onError callback displays the error toast.
       }
     }
   });
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending = formik.isSubmitting || createMutation.isPending || updateMutation.isPending;
 
   return (
-    <Card className='mx-auto w-full max-w-3xl'>
-      <CardHeader>
-        <CardTitle className='text-left text-2xl font-bold'>{pageTitle}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form
-          className='space-y-8'
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-        >
-          <FieldGroup>
-            <form.AppField
-              name='image'
-              children={(field) => (
-                <field.FileUploadField
-                  label='Product Image'
-                  description='Upload a product image'
-                  maxSize={5 * 1024 * 1024}
-                  maxFiles={4}
-                />
-              )}
-            />
-
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              <form.AppField
-                name='name'
-                children={(field) => (
-                  <field.TextField label='Product Name' required placeholder='Enter product name' />
-                )}
+    <FormikProvider value={formik}>
+      <Card className='mx-auto w-full max-w-3xl'>
+        <CardHeader>
+          <CardTitle className='text-left text-2xl font-bold'>{pageTitle}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form className='space-y-8' onSubmit={formik.handleSubmit} noValidate>
+            <FieldGroup>
+              <FileUploadField
+                name='image'
+                label='Product Image'
+                description='Upload a product image'
+                maxSize={5 * 1024 * 1024}
+                maxFiles={4}
               />
-
-              <form.AppField
-                name='category'
-                children={(field) => (
-                  <field.SelectField
-                    label='Category'
-                    required
-                    options={categoryOptions}
-                    placeholder='Select category'
-                  />
-                )}
-              />
-
-              <form.AppField
-                name='price'
-                children={(field) => (
-                  <field.TextField
-                    label='Price'
-                    required
-                    type='number'
-                    min={0}
-                    step={0.01}
-                    placeholder='Enter price'
-                  />
-                )}
-              />
-            </div>
-
-            <form.AppField
-              name='description'
-              children={(field) => (
-                <field.TextareaField
-                  label='Description'
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <TextField
+                  name='name'
+                  label='Product Name'
                   required
-                  placeholder='Enter product description'
-                  maxLength={500}
-                  rows={4}
+                  placeholder='Enter product name'
                 />
-              )}
-            />
-          </FieldGroup>
-
-          <div className='flex justify-end gap-2'>
-            <Button type='button' variant='outline' onClick={() => router.back()}>
-              Cancel
-            </Button>
-            <LoadingButton loading={isPending} type='submit'>
-              {isEdit ? 'Update Product' : 'Add Product'}
-            </LoadingButton>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+                <SelectField
+                  name='category'
+                  label='Category'
+                  required
+                  options={categoryOptions}
+                  placeholder='Select category'
+                />
+                <TextField
+                  name='price'
+                  label='Price'
+                  required
+                  type='number'
+                  min={0}
+                  step={0.01}
+                  placeholder='Enter price'
+                />
+              </div>
+              <TextareaField
+                name='description'
+                label='Description'
+                required
+                placeholder='Enter product description'
+                maxLength={500}
+                rows={4}
+              />
+            </FieldGroup>
+            <div className='flex justify-end gap-2'>
+              <Button type='button' variant='outline' onClick={() => router.back()}>
+                Cancel
+              </Button>
+              <LoadingButton loading={isPending} disabled={isPending} type='submit'>
+                {isEdit ? 'Update Product' : 'Add Product'}
+              </LoadingButton>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </FormikProvider>
   );
 }

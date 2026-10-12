@@ -1,6 +1,9 @@
 'use client';
 
+import { useField } from 'formik';
 import * as React from 'react';
+
+import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -12,12 +15,26 @@ import {
 } from '@/components/ui/command';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
-import { useFieldContext, useFieldInvalid, type BaseFieldProps } from '@/lib/form-context';
+
+export interface ComboboxFieldProps {
+  name: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+  options: {
+    value: string;
+    label: string;
+    disabled?: boolean;
+  }[];
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+}
 
 /** Searchable select — Popover + Command per the shadcn combobox pattern. */
 export function ComboboxField({
+  name,
   label,
   description,
   required,
@@ -25,41 +42,42 @@ export function ComboboxField({
   placeholder = 'Select an option',
   searchPlaceholder = 'Search...',
   emptyMessage = 'No results found.'
-}: BaseFieldProps & {
-  options: { value: string; label: string; disabled?: boolean }[];
-  placeholder?: string;
-  searchPlaceholder?: string;
-  emptyMessage?: string;
-}) {
-  const field = useFieldContext<string>();
-  const isInvalid = useFieldInvalid();
+}: ComboboxFieldProps) {
+  const [field, meta, helpers] = useField<string>(name);
   const [open, setOpen] = React.useState(false);
-  const selected = options.find((o) => o.value === field.state.value);
-  const listboxId = `${field.name}-listbox`;
+
+  const isInvalid = meta.touched && Boolean(meta.error);
+  const selected = options.find((option) => option.value === field.value);
+  const listboxId = `${name}-listbox`;
 
   return (
-    <Field data-invalid={isInvalid}>
-      <FieldLabel htmlFor={field.name}>
+    <Field data-invalid={isInvalid || undefined}>
+      <FieldLabel htmlFor={name}>
         {label}
         {required && ' *'}
       </FieldLabel>
+
       <Popover
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
-          if (!next) field.handleBlur();
+
+          if (!next) {
+            void helpers.setTouched(true);
+          }
         }}
       >
         <PopoverTrigger
           render={
             <Button
-              id={field.name}
+              id={name}
+              type='button'
               variant='outline'
               role='combobox'
               aria-controls={listboxId}
               aria-expanded={open}
-              aria-invalid={isInvalid}
-              aria-describedby={isInvalid ? `${field.name}-error` : undefined}
+              aria-invalid={isInvalid || undefined}
+              aria-describedby={isInvalid ? `${name}-error` : undefined}
               className={cn(
                 'w-full justify-between font-normal',
                 !selected && 'text-muted-foreground'
@@ -68,32 +86,38 @@ export function ComboboxField({
           }
         >
           {selected?.label ?? placeholder}
+
           <Icons.chevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </PopoverTrigger>
+
         <PopoverContent className='w-(--anchor-width) p-0'>
           <Command>
             <CommandInput placeholder={searchPlaceholder} />
+
             <CommandList id={listboxId}>
               <CommandEmpty>{emptyMessage}</CommandEmpty>
+
               <CommandGroup>
-                {options.map((opt) => (
+                {options.map((option) => (
                   <CommandItem
-                    key={opt.value}
-                    value={opt.value}
-                    disabled={opt.disabled}
-                    keywords={[opt.label]}
-                    onSelect={(next) => {
-                      field.handleChange(next);
+                    key={option.value}
+                    value={option.value}
+                    disabled={option.disabled}
+                    keywords={[option.label]}
+                    onSelect={(nextValue) => {
+                      void helpers.setValue(nextValue);
+                      void helpers.setTouched(true);
                       setOpen(false);
                     }}
                   >
                     <Icons.check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        field.state.value === opt.value ? 'opacity-100' : 'opacity-0'
+                        field.value === option.value ? 'opacity-100' : 'opacity-0'
                       )}
                     />
-                    {opt.label}
+
+                    {option.label}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -101,8 +125,10 @@ export function ComboboxField({
           </Command>
         </PopoverContent>
       </Popover>
+
       {description && <FieldDescription>{description}</FieldDescription>}
-      {isInvalid && <FieldError id={`${field.name}-error`} errors={field.state.meta.errors} />}
+
+      {isInvalid && <FieldError id={`${name}-error`} errors={[{ message: meta.error }]} />}
     </Field>
   );
 }

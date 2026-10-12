@@ -10,6 +10,8 @@ const sortingItemSchema = z.object({
   desc: z.boolean()
 });
 
+const sortingSchema = z.array(sortingItemSchema);
+
 export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>) => {
   const validKeys = columnIds ? (columnIds instanceof Set ? columnIds : new Set(columnIds)) : null;
 
@@ -17,9 +19,11 @@ export const getSortingStateParser = <TData>(columnIds?: string[] | Set<string>)
     parse: (value) => {
       try {
         const parsed = JSON.parse(value);
-        const result = z.array(sortingItemSchema).safeParse(parsed);
+        const result = sortingSchema.safeParse(parsed);
 
-        if (!result.success) return null;
+        if (!result.success) {
+          return null;
+        }
 
         if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
           return null;
@@ -45,6 +49,8 @@ const filterItemSchema = z.object({
   filterId: z.string()
 });
 
+const filtersSchema = z.array(filterItemSchema);
+
 export type FilterItemSchema = z.infer<typeof filterItemSchema>;
 
 export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>) => {
@@ -54,9 +60,11 @@ export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>)
     parse: (value) => {
       try {
         const parsed = JSON.parse(value);
-        const result = z.array(filterItemSchema).safeParse(parsed);
+        const result = filtersSchema.safeParse(parsed);
 
-        if (!result.success) return null;
+        if (!result.success) {
+          return null;
+        }
 
         if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
           return null;

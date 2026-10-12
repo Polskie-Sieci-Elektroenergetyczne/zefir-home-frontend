@@ -1,5 +1,7 @@
 'use client';
 
+import { useField } from 'formik';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Field,
@@ -11,30 +13,35 @@ import {
   FieldSet
 } from '@/components/ui/field';
 import { cn } from '@/lib/utils';
-import { useFieldContext, useFieldInvalid, type BaseFieldProps } from '@/lib/form-context';
+
+export interface CheckboxGroupFieldProps {
+  name: string;
+  label: string;
+  description?: string;
+  required?: boolean;
+  options: {
+    value: string;
+    label: string;
+    disabled?: boolean;
+  }[];
+  className?: string;
+}
 
 /**
- * Multi-select checkbox group over a `string[]` value. Use with
- * `mode='array'` on the `<form.AppField>`:
- *
- * ```tsx
- * <form.AppField name='interests' mode='array'
- *   children={(field) => <field.CheckboxGroupField label='Interests' options={…} />} />
- * ```
+ * Multi-select checkbox group backed by a Formik `string[]` value.
  */
 export function CheckboxGroupField({
+  name,
   label,
   description,
   required,
   options,
   className
-}: BaseFieldProps & {
-  options: { value: string; label: string; disabled?: boolean }[];
-  /** Layout for the option grid, e.g. 'grid grid-cols-2 gap-3'. */
-  className?: string;
-}) {
-  const field = useFieldContext<string[]>();
-  const isInvalid = useFieldInvalid();
+}: CheckboxGroupFieldProps) {
+  const [field, meta, helpers] = useField<string[]>(name);
+
+  const value = field.value ?? [];
+  const isInvalid = meta.touched && Boolean(meta.error);
 
   return (
     <FieldSet>
@@ -42,35 +49,46 @@ export function CheckboxGroupField({
         {label}
         {required && ' *'}
       </FieldLegend>
+
       {description && <FieldDescription>{description}</FieldDescription>}
+
       <FieldGroup data-slot='checkbox-group' className={cn('gap-3', className)}>
-        {options.map((opt) => (
-          <Field key={opt.value} orientation='horizontal' data-invalid={isInvalid}>
-            <Checkbox
-              id={`${field.name}-${opt.value}`}
-              name={field.name}
-              disabled={opt.disabled}
-              aria-invalid={isInvalid}
-              aria-describedby={isInvalid ? `${field.name}-error` : undefined}
-              checked={field.state.value.includes(opt.value)}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  field.pushValue(opt.value);
-                } else {
-                  const index = field.state.value.indexOf(opt.value);
-                  if (index > -1) {
-                    field.removeValue(index);
-                  }
-                }
-              }}
-            />
-            <FieldLabel htmlFor={`${field.name}-${opt.value}`} className='font-normal'>
-              {opt.label}
-            </FieldLabel>
-          </Field>
-        ))}
+        {options.map((option) => {
+          const isChecked = value.includes(option.value);
+
+          return (
+            <Field
+              key={option.value}
+              orientation='horizontal'
+              data-invalid={isInvalid || undefined}
+            >
+              <Checkbox
+                id={`${name}-${option.value}`}
+                name={field.name}
+                disabled={option.disabled}
+                checked={isChecked}
+                aria-invalid={isInvalid || undefined}
+                aria-describedby={isInvalid ? `${name}-error` : undefined}
+                onCheckedChange={(checked) => {
+                  const nextValue =
+                    checked === true
+                      ? [...value, option.value]
+                      : value.filter((item) => item !== option.value);
+
+                  void helpers.setValue(nextValue);
+                  void helpers.setTouched(true);
+                }}
+              />
+
+              <FieldLabel htmlFor={`${name}-${option.value}`} className='font-normal'>
+                {option.label}
+              </FieldLabel>
+            </Field>
+          );
+        })}
       </FieldGroup>
-      {isInvalid && <FieldError id={`${field.name}-error`} errors={field.state.meta.errors} />}
+
+      {isInvalid && <FieldError id={`${name}-error`} errors={[{ message: meta.error }]} />}
     </FieldSet>
   );
 }

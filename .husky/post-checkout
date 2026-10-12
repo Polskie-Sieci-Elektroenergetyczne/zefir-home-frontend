@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+OLD_HEAD=$1
+NEW_HEAD=$2
+IS_BRANCH_CHECKOUT=$3
+
+# Ignore file checkouts like: git checkout -- some-file
+if [ "$IS_BRANCH_CHECKOUT" != "1" ]; then
+  exit 0
+fi
+
+# Check whether package.json changed between the old and new branch
+if git diff --name-only "$OLD_HEAD" "$NEW_HEAD" | grep -q '^package\.json$'; then
+  echo "package.json changed — running npm install..."
+  npm install
+fi
