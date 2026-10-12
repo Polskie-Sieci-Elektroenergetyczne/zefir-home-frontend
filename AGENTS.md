@@ -133,9 +133,6 @@ The project follows a feature-based folder structure designed for scalability in
 /docs                      # Documentation
 │   └── themes.md          # Theme customization guide
 
-/scripts                   # Dev tooling
-    ├── cleanup.js         # Feature removal, run via `npm run cleanup` (templates in cleanup-templates/, typechecked)
-    └── cleanup-templates/ # Replacement files cleanup.js copies into the repo
 
 Dockerfile                 # Node.js production Dockerfile
 .dockerignore              # Docker build exclusions
@@ -490,37 +487,6 @@ Both use `output: 'standalone'` in `next.config.ts`. Pass `NEXT_PUBLIC_*` vars a
 
 - Output: `standalone` (optimized for Docker/self-hosting)
 - Sentry source maps uploaded automatically in CI
-
----
-
-## Feature Cleanup System
-
-A single `scripts/cleanup.js` file handles removal of optional features:
-
-```bash
-# Interactive mode — prompts for each feature
-node scripts/cleanup.js --interactive
-
-# Remove specific features
-node scripts/cleanup.js notifications   # Remove notification center
-node scripts/cleanup.js themes          # Keep one theme, remove rest
-node scripts/cleanup.js sentry          # Remove error tracking
-
-# Remove multiple at once
-node scripts/cleanup.js kanban chat notifications
-
-# Preview without changing files
-node scripts/cleanup.js --dry-run kanban
-
-# List all features
-node scripts/cleanup.js --list
-```
-
-**Safety**: Script requires git repository with at least one commit. Use `--force` to skip.
-
-Replacement files live in `scripts/cleanup-templates/` as real `.ts`/`.tsx` files typechecked by `tsc` and `next build`, so template rot fails loudly instead of shipping broken code.
-
-After cleanup, delete `scripts/cleanup.js` and `scripts/cleanup-templates/` — the dev server message auto-cleans on next start.
 
 ---
 
